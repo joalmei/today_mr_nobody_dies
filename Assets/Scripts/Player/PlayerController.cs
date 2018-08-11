@@ -91,6 +91,7 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     private void UpdateJetpack(bool _jetpackUp)
     {
+        // Fuel
         if (_jetpackUp)
         {
             m_jetpackFuel = Mathf.Max(0, m_jetpackFuel - Time.deltaTime);
@@ -100,6 +101,17 @@ public class PlayerController : MonoBehaviour
             m_jetpackFuel = Mathf.Min(m_maxJetpackFuel, m_jetpackFuel + Time.deltaTime);
         }
 
+        if (m_jetpackFuel < m_maxJetpackFuel)
+        {
+            GUIMgr.JetPackFueldSlider.fillRect.gameObject.SetActive(true);
+            GUIMgr.JetPackFueldSlider.value = 1 - m_jetpackFuel / m_maxJetpackFuel;
+        }
+        else
+        {
+            GUIMgr.JetPackFueldSlider.fillRect.gameObject.SetActive(false);
+        }
+
+        // Translation
         if (_jetpackUp && m_jetpackFuel > 0)
         {
             m_jetPackSpeed = Mathf.Lerp(m_jetPackSpeed, m_maxJetPackSpeed, Time.deltaTime * m_jetPackAccUp);

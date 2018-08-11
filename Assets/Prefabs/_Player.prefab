@@ -52,7 +52,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1681118519755304}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.5, z: 0}
+  m_LocalPosition: {x: 0, y: -2.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4574866097782656}
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_maxWalkSpeed: 5
-  m_walkAcc: 7
+  m_walkAcc: 10
   m_dashSpeed:
     serializedVersion: 2
     m_Curve:
@@ -183,7 +183,8 @@ MonoBehaviour:
     m_RotationOrder: 4
   m_dashMaxSpeed: 12
   m_dashDuration: 0.15
-  m_dashCoolDown: 1
-  m_maxJetPackSpeed: 10
-  m_jetPackAccUp: 7
-  m_jetPackAccDown: 5
+  m_dashCoolDownDuration: 0.3
+  m_maxJetPackSpeed: 12
+  m_jetPackAccUp: 10
+  m_jetPackAccDown: 6
+  m_maxJetpackFuel: 0.5
