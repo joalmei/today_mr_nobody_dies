@@ -11,49 +11,76 @@ public class PlayerController : MonoBehaviour
 
     [Header("Dash")]
     public AnimationCurve   m_dashSpeed                 = new AnimationCurve(new Keyframe(0, 1), new Keyframe(1, 0));
+    public float            m_dashMaxSpeed              = 5;
     public float            m_dashDuration              = 0.1f;
+    public float            m_dashCoolDown              = 1;        // TODO
 
     [Header("Jetpack")]
-    public float            m_maxJetPackSpeed = 5;
+    public float            m_maxJetPackSpeed           = 5;
     public float            m_jetPackAccUp              = 12;
     public float            m_jetPackAccDown            = 5;
-    
+
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
+    // walk
     private float           m_walkSpeed                 = 0;
+
+    // jetpack
     private float           m_jetPackSpeed              = 0;
 
+    // dash
+    private float           m_dashTimer                 = 0;
+    private Vector2         m_dashDirection             = Vector2.zero;
+
+    // DEFINES
     private const float     MIN_SPEED_TO_MOVE           = 0.1f;
-    private const float     GROUND_Y_VALUE_TO_DELETE    = -2.35f;
-    
+    private const float     GROUND_Y_VALUE_TO_DELETE    = -2.5f;
 
     // ======================================================================================
     // PUBLIC MEMBERS
     // ======================================================================================
+    public void Start()
+    {
+        m_dashTimer         = m_dashDuration;
+        m_dashDirection     = Vector2.right;
+    }
+
+    // ======================================================================================
     public void Update ()
     {
+        // get input
         float   horizontal      = Input.GetAxis("Horizontal");
+        float   vertical        = Input.GetAxis("Vertical");
         bool    enableJetPack   = Input.GetButton("Jump");
         bool    doDash          = Input.GetButtonDown("Dash");
 
-        UpdateTransform(horizontal, enableJetPack, doDash);
-        UpdateGravity(enableJetPack);
+
+        // update position
+        UpdateTransform(horizontal, vertical, enableJetPack, doDash);
+        UpdateGravity();
 	}
 
     // ======================================================================================
     // PRIVATE MEMBERS
     // ======================================================================================
-    private void UpdateTransform(float _inputHorizontal, bool _inputJetpack, bool _doDash)
+    private void UpdateTransform(float _inputHorizontal, float _inputVertical, bool _jetpackUp, bool _doDash)
     {
+        UpdateWalk(_inputHorizontal);
+        UpdateDash(_inputHorizontal, _inputVertical, _doDash);
+        UpdateJetpack(_jetpackUp);
+    }
+
+    // ======================================================================================
+    private void UpdateWalk (float _inputHorizontal)
+    {
+        // walk
         m_walkSpeed = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
-
         this.transform.position += Vector3.right * Time.deltaTime * m_walkSpeed;
+    }
 
-        if (_doDash)
-        {
-            this.transform.position += Vector3.right * Time.deltaTime * m_walkSpeed * 7;
-        }
-
-        if (_inputJetpack)
+    // ======================================================================================
+    private void UpdateJetpack(bool _jetpackUp)
+    {
+        if (_jetpackUp)
         {
             m_jetPackSpeed = Mathf.Lerp(m_jetPackSpeed, m_maxJetPackSpeed, Time.deltaTime * m_jetPackAccUp);
         }
@@ -66,7 +93,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 m_jetPackSpeed = 0;
-            }
+            }   
         }
 
         if (m_jetPackSpeed > 0)
@@ -76,16 +103,41 @@ public class PlayerController : MonoBehaviour
     }
 
     // ======================================================================================
-    private void UpdateGravity (bool _enableJetPack)
+    private void UpdateDash(float _inputHorizontal, float _inputVertical, bool _doDash)
     {
-        //if (!_enableJetPack)
+        // Init Dash
+        if (_doDash)
         {
-            this.transform.position += Time.deltaTime * Physics.gravity * .7f;
+            m_dashTimer = 0;
+        }
+        m_dashTimer += Time.deltaTime;
 
-            if (this.transform.position.y < GROUND_Y_VALUE_TO_DELETE)
-            {
-                this.transform.position = new Vector3(this.transform.position.x, GROUND_Y_VALUE_TO_DELETE, this.transform.position.z);
-            }
+        // Keep memory of dash direction
+        if (_inputHorizontal != 0 || _inputVertical != 0)
+        {
+            m_dashDirection.x = _inputHorizontal;
+            m_dashDirection.y = _inputVertical;
+        }
+
+        m_dashDirection.Normalize();
+
+        Debug.DrawRay(this.transform.position, new Vector3(m_dashDirection.x, m_dashDirection.y), Color.magenta);
+
+        // Dash if necessary
+        if (m_dashTimer < m_dashDuration)
+        {
+            this.transform.position += new Vector3(m_dashDirection.x, m_dashDirection.y) * Time.deltaTime * m_dashMaxSpeed * m_dashSpeed.Evaluate(m_dashTimer / m_dashDuration);
+        }
+    }
+
+    // ======================================================================================
+    private void UpdateGravity ()
+    {
+        this.transform.position += Time.deltaTime * Physics.gravity * .6f;
+
+        if (this.transform.position.y < GROUND_Y_VALUE_TO_DELETE)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, GROUND_Y_VALUE_TO_DELETE, this.transform.position.z);
         }
     }
 }
