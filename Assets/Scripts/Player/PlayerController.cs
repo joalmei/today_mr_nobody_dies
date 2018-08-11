@@ -9,6 +9,10 @@ public class PlayerController : MonoBehaviour
     public float            m_maxWalkSpeed              = 7;
     public float            m_walkAcc                   = 1;
 
+    [Header("Dash")]
+    public AnimationCurve   m_dashSpeed                 = new AnimationCurve(new Keyframe(0, 1), new Keyframe(1, 0));
+    public float            m_dashDuration              = 0.1f;
+
     [Header("Jetpack")]
     public float            m_maxJetPackSpeed = 5;
     public float            m_jetPackAccUp              = 12;
@@ -29,19 +33,25 @@ public class PlayerController : MonoBehaviour
     {
         float   horizontal      = Input.GetAxis("Horizontal");
         bool    enableJetPack   = Input.GetButton("Jump");
+        bool    doDash          = Input.GetButtonDown("Dash");
 
-        UpdateTransform(horizontal, enableJetPack);
+        UpdateTransform(horizontal, enableJetPack, doDash);
         UpdateGravity(enableJetPack);
 	}
 
     // ======================================================================================
     // PRIVATE MEMBERS
     // ======================================================================================
-    private void UpdateTransform(float _inputHorizontal, bool _inputJetpack)
+    private void UpdateTransform(float _inputHorizontal, bool _inputJetpack, bool _doDash)
     {
         m_walkSpeed = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
 
         this.transform.position += Vector3.right * Time.deltaTime * m_walkSpeed;
+
+        if (_doDash)
+        {
+            this.transform.position += Vector3.right * Time.deltaTime * m_walkSpeed * 7;
+        }
 
         if (_inputJetpack)
         {
