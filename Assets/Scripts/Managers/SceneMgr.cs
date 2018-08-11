@@ -9,7 +9,8 @@ public class SceneMgr : MonoBehaviour
     public static float     GlobalZ { get { return m_manager.m_globalZ; } }
     public float            m_max_time = 60;
     public static float     MaxTime { get { return m_manager.m_max_time; } }
-
+    public static bool      isGameOver;
+    
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
     private static SceneMgr m_manager;
 
@@ -21,5 +22,6 @@ public class SceneMgr : MonoBehaviour
     {
         Debug.Assert(m_manager == null, this.gameObject.name + " - SceneMgr : scene manager must be unique!");
         m_manager = this;
+        isGameOver = false;
 	}
 }

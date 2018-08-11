@@ -12,6 +12,8 @@ public class CameraController : MonoBehaviour {
     private Camera m_camera;
     public float m_approach_factor;
     private float max_time;
+    public float m_max_size;
+    public float m_min_size;
 
     void Start(){
         m_time = 0;
@@ -21,13 +23,16 @@ public class CameraController : MonoBehaviour {
     }
 
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
         if (m_time < max_time)
         {
             m_time += Time.deltaTime;
-            m_camera.orthographicSize -= m_approach_factor * m_time;
+            m_camera.orthographicSize = m_max_size - (m_max_size - m_min_size) / max_time * m_time;
         }
-        Debug.Log(m_offset);
+        else
+        {
+            SceneMgr.isGameOver = true;
+        }
         m_offset.y = m_starting_y * (1 - m_time / max_time);
         transform.position = m_player.position + m_offset;
 	}
