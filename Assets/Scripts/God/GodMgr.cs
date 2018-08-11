@@ -11,8 +11,11 @@ public class GodMgr : MonoBehaviour
     public KeyCode TrapButton = KeyCode.D;
 
     public float BombMaximumSpeed = 1.0f;
+    public float PowerCooldown = 4.0f;
 
     public GameObject PrefabBomb;
+    public GameObject PrefabTrap;
+    public GameObject PrefabTurret;
 
     private GodPower CurrentPower = GodPower.Bomb;
 
@@ -21,6 +24,15 @@ public class GodMgr : MonoBehaviour
     // Bomb stuff
     private bool IsDraggingBomb = false;
     private GameObject DraggedBomb = null;
+    private float LastBomb = 0.0f;
+
+    // Turret stuff
+    private bool IsPlacingTurret = false;
+    private GameObject PlacedTurret = null;
+    private float LastTurret = 0.0f;
+
+    // Trap stuff
+    private float LastTrap = 0.0f;
         
     private Queue<Vector3> LastMousePositions;
     private Queue<float> LastStepsTime;
@@ -40,8 +52,8 @@ public class GodMgr : MonoBehaviour
         LastMousePositions = new Queue<Vector3>();
         LastStepsTime = new Queue<float>();
     }
-	
-	void FixedUpdate () {
+
+    void FixedUpdate() {
         if (MaySwitchPowers)
         {
             if (Input.GetKeyDown(BombButton))
@@ -62,7 +74,7 @@ public class GodMgr : MonoBehaviour
         {
             if (Input.GetButton("Fire1"))
             {
-                if (!IsDraggingBomb)
+                if (!IsDraggingBomb && Time.time > LastBomb + PowerCooldown)
                 {
                     MaySwitchPowers = false;
                     IsDraggingBomb = true;
@@ -81,25 +93,27 @@ public class GodMgr : MonoBehaviour
                     IsDraggingBomb = false;
                     MaySwitchPowers = true;
 
+                    LastBomb = Time.time;
+
                     if (DraggedBomb)
                     {
                         Rigidbody BombPhysics = DraggedBomb.GetComponent<Rigidbody>();
                         BombPhysics.useGravity = true;
                         BombPhysics.isKinematic = false;
-                        
+
                         Vector3[] PositionVector = LastMousePositions.ToArray() as Vector3[];
                         float[] TimeArray = LastStepsTime.ToArray() as float[];
 
                         Vector3 ThrowVector = (
-                            (PositionVector[PositionVector.Length-1] - PositionVector[0]) /
-                            (TimeArray[TimeArray.Length-1] - TimeArray[0])
+                            (PositionVector[PositionVector.Length - 1] - PositionVector[0]) /
+                            (TimeArray[TimeArray.Length - 1] - TimeArray[0])
                         );
-                        
+
                         BombPhysics.velocity = ThrowVector.normalized * Mathf.Clamp(ThrowVector.magnitude, 0, BombMaximumSpeed);
                     }
                 }
             }
-            
+
             if (IsDraggingBomb)
             {
                 Rigidbody BombPhysics = DraggedBomb.GetComponent<Rigidbody>();
@@ -110,6 +124,46 @@ public class GodMgr : MonoBehaviour
                     BombPhysics.velocity +
                     GoalVector.normalized * Time.fixedDeltaTime * BombAcceleration
                 );*/
+            }
+        } else if (CurrentPower == GodPower.Turret)
+        {
+            if (Input.GetButton("Fire1"))
+            {
+                if (!IsPlacingTurret && Time.time > LastTurret + PowerCooldown)
+                {
+                    MaySwitchPowers = false;
+                    IsPlacingTurret = true;
+
+                    PlacedTurret = Instantiate(
+                        PrefabTurret,
+                        GetMouseWorldPos(),
+                        Quaternion.identity
+                    ) as GameObject;
+                }
+            }
+            else
+            {
+                if (IsPlacingTurret)
+                {
+                    IsPlacingTurret = false;
+                    MaySwitchPowers = true;
+
+                    LastTurret = Time.time;
+
+                    PlacedTurret.GetComponent<Turret>().Activate(GetMouseWorldPos() - PlacedTurret.transform.position);
+                }
+            }
+        } else if (CurrentPower == GodPower.Trap)
+        {
+            if (Input.GetButtonDown("Fire1") && Time.time > LastTrap + PowerCooldown)
+            {
+                Instantiate(
+                    PrefabTrap,
+                    GetMouseWorldPos(),
+                    Quaternion.identity
+                );
+
+                LastTrap = Time.time;
             }
         }
 

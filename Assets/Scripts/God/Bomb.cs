@@ -2,10 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bomb : MonoBehaviour {
+public class Bomb : ActionOnTouch
+{
+    public override void PlayerTouched(PlayerController player)
+    {
+        Destroy(gameObject);
+    }
 
-	// Use this for initialization
-	void Start () {
+    private void OnCollisionEnter(Collision collision)
+    {
+        Collider collider = collision.collider;
+
+        if (collider.gameObject.GetComponent<PlayerController>() != null)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
