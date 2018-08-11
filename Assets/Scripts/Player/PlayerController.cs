@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour
     public float            m_jetPackAccDown            = 5;
     public float            m_maxJetpackFuel            = 2;
 
+    public float            m_width                     = .1f;
+    public float            m_height                    = .1f;
+
     public static PlayerController Player1 { get; protected set; }
 
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
@@ -39,6 +42,7 @@ public class PlayerController : MonoBehaviour
     // DEFINES
     private const float     MIN_SPEED_TO_MOVE           = 0.1f;
     private const float     GROUND_Y_VALUE_TO_DELETE    = -2.5f;
+
 
     // ======================================================================================
     // PUBLIC MEMBERS
@@ -70,6 +74,12 @@ public class PlayerController : MonoBehaviour
         UpdateGravity();
 	}
 
+
+    // ======================================================================================
+    public void TakeDamage()
+    {
+    }
+
     // ======================================================================================
     // PRIVATE MEMBERS
     // ======================================================================================
@@ -91,6 +101,7 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     private void UpdateJetpack(bool _jetpackUp)
     {
+        // Fuel
         if (_jetpackUp)
         {
             m_jetpackFuel = Mathf.Max(0, m_jetpackFuel - Time.deltaTime);
@@ -100,6 +111,17 @@ public class PlayerController : MonoBehaviour
             m_jetpackFuel = Mathf.Min(m_maxJetpackFuel, m_jetpackFuel + Time.deltaTime);
         }
 
+        if (m_jetpackFuel < m_maxJetpackFuel)
+        {
+            GUIMgr.JetPackFueldSlider.fillRect.gameObject.SetActive(true);
+            GUIMgr.JetPackFueldSlider.value = 1 - m_jetpackFuel / m_maxJetpackFuel;
+        }
+        else
+        {
+            GUIMgr.JetPackFueldSlider.fillRect.gameObject.SetActive(false);
+        }
+
+        // Translation
         if (_jetpackUp && m_jetpackFuel > 0)
         {
             m_jetPackSpeed = Mathf.Lerp(m_jetPackSpeed, m_maxJetPackSpeed, Time.deltaTime * m_jetPackAccUp);
@@ -118,7 +140,7 @@ public class PlayerController : MonoBehaviour
 
         if (m_jetPackSpeed > 0)
         {
-            this.transform.position += Vector3.up * Time.deltaTime * m_jetPackSpeed;
+            this.transform.position = CheckCollision(this.transform.position, this.transform.position + Vector3.up * Time.deltaTime * m_jetPackSpeed);
         }
     }
 
@@ -149,18 +171,43 @@ public class PlayerController : MonoBehaviour
         // Dash if necessary
         if (m_dashTimer < m_dashDuration)
         {
-            this.transform.position += new Vector3(m_dashDirection.x, m_dashDirection.y) * Time.deltaTime * m_dashMaxSpeed * m_dashSpeed.Evaluate(m_dashTimer / m_dashDuration);
+            this.transform.position = CheckCollision(   this.transform.position,
+                                                        this.transform.position + new Vector3(m_dashDirection.x, m_dashDirection.y) * Time.deltaTime * m_dashMaxSpeed * m_dashSpeed.Evaluate(m_dashTimer / m_dashDuration));
         }
     }
 
     // ======================================================================================
     private void UpdateGravity ()
     {
-        this.transform.position += Time.deltaTime * Physics.gravity * .6f;
+        this.transform.position = CheckCollision(   this.transform.position,
+                                                    this.transform.position + Time.deltaTime * Physics.gravity * .6f);
 
         if (this.transform.position.y < GROUND_Y_VALUE_TO_DELETE)
         {
             this.transform.position = new Vector3(this.transform.position.x, GROUND_Y_VALUE_TO_DELETE, this.transform.position.z);
         }
     }
+
+    // ======================================================================================
+    private Vector3 CheckCollision (Vector3 _startPos, Vector3 _endPos)
+    {
+        RaycastHit  hitInfo;
+        Vector3     direction = _endPos - _startPos;
+        
+        if (direction.y < 0)
+        {
+            if (Physics.Raycast(_startPos, direction, out hitInfo, direction.magnitude, ~(1 << this.gameObject.layer)))
+            {
+                Ground gnd = hitInfo.collider.gameObject.GetComponent<Ground>();
+
+                if (gnd != null)
+                {
+                    return new Vector3(_endPos.x, gnd.SurfaceY());
+                }
+            }
+        }
+        
+        return _endPos;
+    }
+
 }
