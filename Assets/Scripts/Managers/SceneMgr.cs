@@ -6,11 +6,22 @@ public class SceneMgr : MonoBehaviour
 {
     // -------------------------------- PUBLIC ATTRIBUTES -------------------------------- //
     public float            m_globalZ = 0;
-    public static float     GlobalZ { get { return m_manager.m_globalZ; } }
     public float            m_max_time = 60;
+    public Transform        m_limitUp;
+    public Transform        m_limitDown;
+    public Transform        m_limitLeft;
+    public Transform        m_limitRight;
+
+    public static float     GlobalZ { get { return m_manager.m_globalZ; } }
     public static float     MaxTime { get { return m_manager.m_max_time; } }
+
+    public static float     MaxY { get { return m_manager.m_limitUp.position.y; } }
+    public static float     MinY { get { return m_manager.m_limitDown.position.y; } }
+    public static float     MaxX { get { return m_manager.m_limitRight.position.x; } }
+    public static float     MinX { get { return m_manager.m_limitLeft.position.x; } }
+
     public static bool      isGameOver;
-    
+
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
     private static SceneMgr m_manager;
 
