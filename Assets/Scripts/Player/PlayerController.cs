@@ -13,12 +13,15 @@ public class PlayerController : MonoBehaviour
     public AnimationCurve   m_dashSpeed                 = new AnimationCurve(new Keyframe(0, 1), new Keyframe(1, 0));
     public float            m_dashMaxSpeed              = 5;
     public float            m_dashDuration              = 0.1f;
-    public float            m_dashCoolDown              = 1;        // TODO
+    public float            m_dashCoolDownDuration      = 1;
 
     [Header("Jetpack")]
     public float            m_maxJetPackSpeed           = 5;
     public float            m_jetPackAccUp              = 12;
     public float            m_jetPackAccDown            = 5;
+    public float            m_maxJetpackFuel            = 2;
+
+    public static PlayerController Player1 { get; protected set; }
 
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
     // walk
@@ -26,10 +29,12 @@ public class PlayerController : MonoBehaviour
 
     // jetpack
     private float           m_jetPackSpeed              = 0;
+    private float           m_jetpackFuel               = 0;
 
     // dash
     private float           m_dashTimer                 = 0;
     private Vector2         m_dashDirection             = Vector2.zero;
+    private float           m_dashCooldownTimer         = 0;
 
     // DEFINES
     private const float     MIN_SPEED_TO_MOVE           = 0.1f;
@@ -40,8 +45,14 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     public void Start()
     {
+        Debug.Assert(Player1 == null, this.gameObject.name + " - PlayerController : Player 1 must be UNIQUE!");
+        Player1 = this;
+
         m_dashTimer         = m_dashDuration;
         m_dashDirection     = Vector2.right;
+
+        m_jetpackFuel       = m_maxJetpackFuel;
+        m_dashCooldownTimer = m_dashCoolDownDuration;
     }
 
     // ======================================================================================
@@ -82,6 +93,15 @@ public class PlayerController : MonoBehaviour
     {
         if (_jetpackUp)
         {
+            m_jetpackFuel = Mathf.Max(0, m_jetpackFuel - Time.deltaTime);
+        }
+        else
+        {
+            m_jetpackFuel = Mathf.Min(m_maxJetpackFuel, m_jetpackFuel + Time.deltaTime);
+        }
+
+        if (_jetpackUp && m_jetpackFuel > 0)
+        {
             m_jetPackSpeed = Mathf.Lerp(m_jetPackSpeed, m_maxJetPackSpeed, Time.deltaTime * m_jetPackAccUp);
         }
         else
@@ -105,10 +125,13 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     private void UpdateDash(float _inputHorizontal, float _inputVertical, bool _doDash)
     {
+        m_dashCooldownTimer -= Time.deltaTime;
+
         // Init Dash
-        if (_doDash)
+        if (_doDash && m_dashCooldownTimer < 0)
         {
             m_dashTimer = 0;
+            m_dashCooldownTimer = m_dashCoolDownDuration;
         }
         m_dashTimer += Time.deltaTime;
 
