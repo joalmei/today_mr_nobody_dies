@@ -12,6 +12,11 @@ public class SceneMgr : MonoBehaviour
     public Transform        m_limitLeft;
     public Transform        m_limitRight;
 
+    public GameObject       TimerLeft;
+    public GameObject       TimerRight;
+
+    public float GameLength;
+
     public static float     GlobalZ { get { return m_manager.m_globalZ; } }
     public static float     MaxTime { get { return m_manager.m_max_time; } }
 
@@ -35,4 +40,14 @@ public class SceneMgr : MonoBehaviour
         m_manager = this;
         isGameOver = false;
 	}
+
+    public void Update()
+    {
+        float TimeLeft = Mathf.Clamp(GameLength - Time.time, 0, GameLength);
+        int MinutesLeft = (int)Mathf.Floor(TimeLeft / 60);
+        int SecondsLeft = (int)Mathf.Ceil(TimeLeft - MinutesLeft*60.0f);
+
+        TimerLeft.GetComponent<UnityEngine.UI.Text>().text = "" + MinutesLeft;
+        TimerRight.GetComponent<UnityEngine.UI.Text>().text = "" + SecondsLeft;
+    }
 }
