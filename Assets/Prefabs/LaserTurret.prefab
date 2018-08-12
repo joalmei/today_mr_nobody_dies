@@ -111,6 +111,5 @@ MonoBehaviour:
   FirePeriod: 1.8
   Angle: 0
   Active: 0
-  Lifespan: 18
   PrefabLaser: {fileID: 1419813997656540, guid: 737440a97c535c042b8eb1720779e220,
     type: 2}
