@@ -23,6 +23,9 @@ public class PlayerController : MonoBehaviour
     public string           m_isJetpackUpBoolParam      = "IsJetpackUp";
     public string           m_isFallingBoolParam        = "IsFalling";
 
+    public float            m_minSpeedToStartWalkAnim   = .2f;
+    public float            m_minSpeedToStopWalkAnim    = .2f;
+
     [Header("Locomotion")]
     [Header("Walk")]
     public float            m_maxWalkSpeed              = 7;
@@ -123,12 +126,19 @@ public class PlayerController : MonoBehaviour
     private void UpdateWalk (float _inputHorizontal)
     {
         // walk
-        m_walkSpeed = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
-        this.transform.position += Vector3.right * Time.deltaTime * m_walkSpeed;
+        float nextSpeed  = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
+        this.transform.position += Vector3.right * Time.deltaTime * nextSpeed;
 
-        m_spriteRenderer.flipX = m_walkSpeed < 0.0f;
+        m_spriteRenderer.flipX = nextSpeed < 0.0f;
 
-        if (Mathf.Abs(m_walkSpeed) > 1.2f)
+        // Walking Anim State
+
+        float nextSpeedMag = Mathf.Abs(nextSpeed);
+        float prevSpeedMag = Mathf.Abs(m_walkSpeed);
+        
+        bool isStartingWalk = nextSpeed > prevSpeedMag;
+
+        if (isStartingWalk && nextSpeedMag > m_minSpeedToStartWalkAnim || !isStartingWalk && nextSpeedMag > m_minSpeedToStopWalkAnim)
         {
             m_state = eStates.Walking;
         }
@@ -136,6 +146,8 @@ public class PlayerController : MonoBehaviour
         {
             m_state = eStates.Idle;
         }
+
+        m_walkSpeed = nextSpeed;
     }
 
     // ======================================================================================
