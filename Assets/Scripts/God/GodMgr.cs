@@ -51,6 +51,10 @@ public class GodMgr : MonoBehaviour
     {
         LastMousePositions = new Queue<Vector3>();
         LastStepsTime = new Queue<float>();
+
+        LastBomb = -PowerCooldown;
+        LastTrap = -PowerCooldown;
+        LastTurret = -PowerCooldown;
     }
 
     void FixedUpdate() {

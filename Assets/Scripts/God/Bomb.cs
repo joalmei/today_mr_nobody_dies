@@ -4,19 +4,34 @@ using UnityEngine;
 
 public class Bomb : ActionOnTouch
 {
+    public float ExplosionRadius = 1.0f;
+
     public override void PlayerTouched(PlayerController player)
     {
         Destroy(gameObject);
     }
-
-    private void OnCollisionEnter(Collision collision)
+    
+    public void OnCollisionEnter(Collision collision)
     {
-        Collider collider = collision.collider;
+        print("Collided!");
+        Collider[] ExplosionColliders = Physics.OverlapSphere(
+            gameObject.transform.position,
+            ExplosionRadius,
+            LayerMask.GetMask("Player")
+        );
 
-        if (collider.gameObject.GetComponent<PlayerController>() != null)
+        foreach(Collider collider in ExplosionColliders)
         {
-            Destroy(gameObject);
+            PlayerController player = collider.gameObject.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.TakeDamage();
+                print("WithPlayer");
+            }
         }
+
+        Destroy(gameObject);
+
     }
 
     // Use this for initialization
