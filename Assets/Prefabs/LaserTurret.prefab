@@ -113,4 +113,3 @@ MonoBehaviour:
   Active: 0
   PrefabLaser: {fileID: 1419813997656540, guid: 737440a97c535c042b8eb1720779e220,
     type: 2}
-  Lifespan: 18

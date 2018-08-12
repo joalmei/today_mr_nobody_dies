@@ -15,6 +15,12 @@ public class PlayerController : MonoBehaviour
 
 
     // -------------------------------- PUBLIC ATTRIBUTES -------------------------------- //
+    [Header("Sounds")]
+    public AudioSource      m_jetpackSFX;
+    public AudioSource      m_dashSFX;
+    public AudioSource      m_deathSFX;
+    public AudioSource      m_damageSFX;
+
     [Header("Animation")]
     public Animator         m_animator;
     public SpriteRenderer   m_spriteRenderer;
@@ -118,6 +124,7 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     public void TakeDamage()
     {
+        m_damageSFX.Play();
     }
 
     // ======================================================================================
@@ -125,43 +132,64 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     private void UpdateTransform(float _inputHorizontal, float _inputVertical, bool _jetpackUp, bool _doDash)
     {
-        Vector3 initialPos  = this.transform.position;
+        Vector3 initialPos = this.transform.position;
 
-        bool isWalking      = UpdateWalk(_inputHorizontal);
+        bool isWalking = UpdateWalk(_inputHorizontal);
         //Vector3 walkPos     = this.transform.position;
 
-        bool isJetpacking   = UpdateJetpack(_jetpackUp);
+        bool isJetpacking = UpdateJetpack(_jetpackUp);
         //Vector3 jetPackPos  = this.transform.position;
 
-        bool isDashing      = UpdateDash(_inputHorizontal, _inputVertical, _doDash);
+        bool isDashing = UpdateDash(_inputHorizontal, _inputVertical, _doDash);
         //Vector3 dashPos     = this.transform.position;
 
-        bool isFalling      = UpdateGravity();
-        Vector3 finalPos    = this.transform.position;
+        bool isFalling = UpdateGravity();
+        Vector3 finalPos = this.transform.position;
 
-        Vector3 deltaPos    = finalPos - initialPos;
+        Vector3 deltaPos = finalPos - initialPos;
 
         // update animation state
+        eStates nextState;
         if (isDashing)
         {
-            m_state = eStates.Dashing;
+            nextState = eStates.Dashing;
         }
         else if (deltaPos.y > m_maxDeltaYForPlane)
         {
-            m_state = eStates.JetpackUp;
+            nextState = eStates.JetpackUp;
         }
         else if (deltaPos.y < 0)
         {
-            m_state = eStates.Falling;
+            nextState = eStates.Falling;
         }
         else if (isWalking)
         {
-            m_state = eStates.Walking;
+            nextState = eStates.Walking;
         }
         else
         {
-            m_state = eStates.Idle;
+            nextState = eStates.Idle;
         }
+
+        // play sfx
+        if (nextState == eStates.Dashing && m_state != eStates.Dashing)
+        {
+            m_jetpackSFX.Stop();
+            m_dashSFX.Play();
+        }
+        else if (nextState == eStates.JetpackUp)
+        {
+            m_jetpackSFX.loop = true;
+
+            if (!m_jetpackSFX.isPlaying)
+                m_jetpackSFX.Play();
+        }
+        else if (nextState == eStates.Walking || nextState == eStates.Idle)
+        {
+            m_jetpackSFX.loop = false;
+        }
+
+        m_state = nextState;
     }
 
     // ======================================================================================
