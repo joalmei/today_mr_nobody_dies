@@ -28,7 +28,7 @@ public class PanelSlider : MonoBehaviour
     // ======================================================================================
     public void Update()
     {
-        if (m_debug)
+        if (m_debug && !Application.isPlaying)
         {
             m_testRatio = Mathf.Clamp01(m_testRatio);
             SetSlider(m_testRatio);
