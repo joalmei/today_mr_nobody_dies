@@ -10,7 +10,10 @@ public class LaserTurret : MonoBehaviour
 
     public GameObject PrefabLaser;
 
+    public float Lifespan;
+
     private float LastFire = 0.0f;
+    private float SpawnTime = 0.0f;
 
     public void Activate(float AngleParam)
     {
@@ -18,6 +21,7 @@ public class LaserTurret : MonoBehaviour
         Active = true;
         Angle = AngleParam;
         LastFire = Time.time;
+        SpawnTime = Time.time;
     }
 
     // Update is called once per frame
@@ -25,17 +29,23 @@ public class LaserTurret : MonoBehaviour
     {
         if (Active)
         {
-            if (Time.time > LastFire + FirePeriod)
+            if (Time.time > SpawnTime + Lifespan)
             {
-                GameObject Laser = Instantiate(
-                    PrefabLaser,
-                    gameObject.transform.position,
-                    Quaternion.Euler(0.0f, 0.0f, -Angle)
-                ) as GameObject;
+                Destroy(gameObject);
+            } else
+            {
+                if (Time.time > LastFire + FirePeriod)
+                {
+                    GameObject Laser = Instantiate(
+                        PrefabLaser,
+                        gameObject.transform.position,
+                        Quaternion.Euler(0.0f, 0.0f, -Angle)
+                    ) as GameObject;
 
-                Laser.GetComponent<Laser>().Activate();
-                
-                LastFire = Time.time;
+                    Laser.GetComponent<Laser>().Activate();
+
+                    LastFire = Time.time;
+                }
             }
         }
     }
