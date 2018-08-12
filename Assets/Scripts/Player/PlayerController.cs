@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // -------------------------------- PUBLIC ATTRIBUTES -------------------------------- //
+    [Header("Locomotion")]
     [Header("Walk")]
     public float            m_maxWalkSpeed              = 7;
     public float            m_walkAcc                   = 1;
@@ -21,8 +22,14 @@ public class PlayerController : MonoBehaviour
     public float            m_jetPackAccDown            = 5;
     public float            m_maxJetpackFuel            = 2;
 
+    [Header("Dimensions")]
     public float            m_width                     = .1f;
     public float            m_height                    = .1f;
+
+    // TODO : Create Ground
+    [Header("Powers")]
+    [Header("Create Ground")]
+    public float            m_groundOffset              = 1;
 
     public static PlayerController Player1 { get; protected set; }
 
@@ -193,7 +200,8 @@ public class PlayerController : MonoBehaviour
     {
         RaycastHit  hitInfo;
         Vector3     direction = _endPos - _startPos;
-        
+        Vector3     finalEndPos = _endPos;
+
         if (direction.y < 0)
         {
             if (Physics.Raycast(_startPos, direction, out hitInfo, direction.magnitude, ~(1 << this.gameObject.layer)))
@@ -202,12 +210,14 @@ public class PlayerController : MonoBehaviour
 
                 if (gnd != null)
                 {
-                    return new Vector3(_endPos.x, gnd.SurfaceY());
+                    finalEndPos.y = gnd.SurfaceY();
                 }
             }
         }
-        
-        return _endPos;
+
+        finalEndPos.x = Mathf.Clamp(finalEndPos.x, SceneMgr.MinX + m_width / 2, SceneMgr.MaxX - m_width / 2);
+        finalEndPos.y = Mathf.Clamp(finalEndPos.y, SceneMgr.MinY, SceneMgr.MaxY /*- m_height / 2*/);
+        return finalEndPos;
     }
 
 }

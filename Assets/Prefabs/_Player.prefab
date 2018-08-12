@@ -188,3 +188,5 @@ MonoBehaviour:
   m_jetPackAccUp: 10
   m_jetPackAccDown: 6
   m_maxJetpackFuel: 0.5
+  m_width: 0.1
+  m_height: 0.1
