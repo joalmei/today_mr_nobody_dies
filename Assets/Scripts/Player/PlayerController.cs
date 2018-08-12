@@ -74,6 +74,7 @@ public class PlayerController : MonoBehaviour
         float   vertical        = Input.GetAxis("Vertical");
         bool    enableJetPack   = Input.GetButton("Jump");
         bool    doDash          = Input.GetButtonDown("Dash");
+        //bool    createGround    = Input.GetButton("Create Ground");
 
 
         // update position
