@@ -6,16 +6,13 @@ enum GodPower {Bomb, Turret, Trap};
 
 public class GodMgr : MonoBehaviour
 {
-    public KeyCode BombButton = KeyCode.A;
-    public KeyCode TurretButton = KeyCode.S;
-    public KeyCode TrapButton = KeyCode.D;
-
     public float BombMaximumSpeed = 1.0f;
     public float PowerCooldown = 4.0f;
 
     public GameObject PrefabBomb;
     public GameObject PrefabTrap;
     public GameObject PrefabTurret;
+    public GameObject PrefabAngleIndicator;
 
     private GodPower CurrentPower = GodPower.Bomb;
 
@@ -30,6 +27,8 @@ public class GodMgr : MonoBehaviour
     private bool IsPlacingTurret = false;
     private GameObject PlacedTurret = null;
     private float LastTurret = 0.0f;
+    public float TurretAngleSteps = 0.0f;
+    private GameObject AngleIndicator;
 
     // Trap stuff
     private float LastTrap = 0.0f;
@@ -60,15 +59,15 @@ public class GodMgr : MonoBehaviour
     void FixedUpdate() {
         if (MaySwitchPowers)
         {
-            if (Input.GetKeyDown(BombButton))
+            if (Input.GetButtonDown("Create Bomb"))
             {
                 CurrentPower = GodPower.Bomb;
             }
-            else if (Input.GetKeyDown(TurretButton))
+            else if (Input.GetButtonDown("Create Turret"))
             {
                 CurrentPower = GodPower.Turret;
             }
-            else if (Input.GetKeyDown(TrapButton))
+            else if (Input.GetButtonDown("Create Trap"))
             {
                 CurrentPower = GodPower.Trap;
             }
@@ -133,16 +132,48 @@ public class GodMgr : MonoBehaviour
         {
             if (Input.GetButton("Fire1"))
             {
-                if (!IsPlacingTurret && Time.time > LastTurret + PowerCooldown)
+                if (!IsPlacingTurret)
                 {
-                    MaySwitchPowers = false;
-                    IsPlacingTurret = true;
+                    if (Time.time > LastTurret + PowerCooldown)
+                    {
+                        MaySwitchPowers = false;
+                        IsPlacingTurret = true;
 
-                    PlacedTurret = Instantiate(
-                        PrefabTurret,
-                        GetMouseWorldPos(),
-                        Quaternion.identity
-                    ) as GameObject;
+                        PlacedTurret = Instantiate(
+                            PrefabTurret,
+                            GetMouseWorldPos(),
+                            Quaternion.identity
+                        ) as GameObject;
+
+                        AngleIndicator = Instantiate(
+                            PrefabAngleIndicator,
+                            PlacedTurret.transform.position,
+                            Quaternion.identity
+                        ) as GameObject;
+                    }
+                }
+
+                if (IsPlacingTurret)
+                {
+                    if (GetMouseWorldPos() == PlacedTurret.transform.position)
+                    {
+                        AngleIndicator.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                    }
+                    else
+                    {
+                        float WinningAngle = 0.0f;
+                        float MouseAngle = Vector3.Angle(Vector3.right, GetMouseWorldPos() - PlacedTurret.transform.position);
+
+                        for (float angle = 0.0f; angle < 360.0f; angle += TurretAngleSteps)
+                        {
+                            if (Mathf.Abs(angle - MouseAngle) < Mathf.Abs(WinningAngle - MouseAngle))
+                            {
+                                WinningAngle = angle;
+                            }
+                        }
+
+                        AngleIndicator.transform.rotation = Quaternion.Euler(0.0f, 0.0f, WinningAngle);
+                    }
                 }
             }
             else
@@ -151,10 +182,27 @@ public class GodMgr : MonoBehaviour
                 {
                     IsPlacingTurret = false;
                     MaySwitchPowers = true;
+                    PlacedTurret = null;
 
                     LastTurret = Time.time;
 
-                    PlacedTurret.GetComponent<BulletTurret>().Activate(GetMouseWorldPos() - PlacedTurret.transform.position);
+                    if (AngleIndicator)
+                    {
+                        Destroy(AngleIndicator);
+                    }
+
+                    float WinningAngle = 0.0f;
+                    float MouseAngle = Vector3.Angle(Vector3.right, GetMouseWorldPos() - PlacedTurret.transform.position);
+
+                    for (float angle = 0.0f; angle < 360.0f; angle += TurretAngleSteps)
+                    {
+                        if (Mathf.Abs(angle - MouseAngle) < Mathf.Abs(WinningAngle - MouseAngle))
+                        {
+                            WinningAngle = angle;
+                        }
+                    }
+                    
+                    PlacedTurret.GetComponent<LaserTurret>().Activate(WinningAngle);
                 }
             }
         } else if (CurrentPower == GodPower.Trap)

@@ -453,6 +453,17 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114764228390534894, guid: 6e7ba0085f1cc0141ad580fe608c296a,
+        type: 2}
+      propertyPath: TurretAngleSteps
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114764228390534894, guid: 6e7ba0085f1cc0141ad580fe608c296a,
+        type: 2}
+      propertyPath: PrefabAngleIndicator
+      value: 
+      objectReference: {fileID: 1419813997656540, guid: 737440a97c535c042b8eb1720779e220,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e7ba0085f1cc0141ad580fe608c296a, type: 2}
   m_IsPrefabAsset: 0
@@ -1329,10 +1340,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_globalZ: 0
   m_max_time: 60
-  m_limitUp: {fileID: 0}
-  m_limitDown: {fileID: 0}
-  m_limitLeft: {fileID: 0}
-  m_limitRight: {fileID: 0}
+  m_limitUp: {fileID: 1677112642}
+  m_limitDown: {fileID: 10643079}
+  m_limitLeft: {fileID: 557657147}
+  m_limitRight: {fileID: 1012335927}
 --- !u!4 &1957575306 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4568768952945022, guid: a23b38d4cc8f1ca4aad2316c92e54ae1,
