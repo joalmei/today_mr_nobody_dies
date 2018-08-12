@@ -23,7 +23,8 @@ public class PlayerController : MonoBehaviour
     public string           m_isJetpackUpBoolParam      = "IsJetpackUp";
     public string           m_isFallingBoolParam        = "IsFalling";
 
-    public float            m_minSpeedToWalkAnim        = .2f;
+    public float            m_minSpeedToStartWalkAnim   = .2f;
+    public float            m_minSpeedToStopWalkAnim    = .2f;
 
     [Header("Locomotion")]
     [Header("Walk")]
@@ -125,12 +126,19 @@ public class PlayerController : MonoBehaviour
     private void UpdateWalk (float _inputHorizontal)
     {
         // walk
-        m_walkSpeed = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
-        this.transform.position += Vector3.right * Time.deltaTime * m_walkSpeed;
+        float nextSpeed  = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
+        this.transform.position += Vector3.right * Time.deltaTime * nextSpeed;
 
-        m_spriteRenderer.flipX = m_walkSpeed < 0.0f;
+        m_spriteRenderer.flipX = nextSpeed < 0.0f;
 
-        if (Mathf.Abs(m_walkSpeed) > m_minSpeedToWalkAnim)
+        // Walking Anim State
+
+        float nextSpeedMag = Mathf.Abs(nextSpeed);
+        float prevSpeedMag = Mathf.Abs(m_walkSpeed);
+
+        bool isStartingWalk = nextSpeed > prevSpeedMag;
+
+        if (isStartingWalk && nextSpeedMag > m_minSpeedToStartWalkAnim || !isStartingWalk && nextSpeedMag > m_minSpeedToStopWalkAnim)
         {
             m_state = eStates.Walking;
         }
@@ -138,6 +146,8 @@ public class PlayerController : MonoBehaviour
         {
             m_state = eStates.Idle;
         }
+
+        m_walkSpeed = nextSpeed;
     }
 
     // ======================================================================================
@@ -227,10 +237,10 @@ public class PlayerController : MonoBehaviour
         this.transform.position = CheckCollision(   this.transform.position,
                                                     this.transform.position + Time.deltaTime * Physics.gravity * .6f);
 
-        //if (this.transform.position.y < GROUND_Y_VALUE_TO_DELETE)
-        //{
-        //    this.transform.position = new Vector3(this.transform.position.x, GROUND_Y_VALUE_TO_DELETE, this.transform.position.z);
-        //}
+        if (this.transform.position.y < GROUND_Y_VALUE_TO_DELETE)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, GROUND_Y_VALUE_TO_DELETE, this.transform.position.z);
+        }
     }
 
     // ======================================================================================
