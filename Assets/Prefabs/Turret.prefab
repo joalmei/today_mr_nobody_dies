@@ -108,8 +108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b064beef4c494a45b759f95d0363d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FirePeriod: 0.3
+  FirePeriod: 0.75
   Direction: {x: 0, y: 0, z: 0}
   Active: 0
-  PrefabBullet: {fileID: 1706616210394468, guid: e63d87ac9c2e07d4291d7d3d8ac7f757,
+  PrefabBullet: {fileID: 1741831967001372, guid: e63d87ac9c2e07d4291d7d3d8ac7f757,
     type: 2}

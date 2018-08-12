@@ -33,6 +33,7 @@ public class Turret : MonoBehaviour
                 ) as GameObject;
 
                 Bullet.GetComponent<Bullet>().Direction = Direction;
+                Bullet.GetComponent<Bullet>().Turret = gameObject;
 
                 LastFire = Time.time;
             }
