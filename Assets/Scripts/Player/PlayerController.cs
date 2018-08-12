@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
     public string           m_isJetpackUpBoolParam      = "IsJetpackUp";
     public string           m_isFallingBoolParam        = "IsFalling";
 
+    public float            m_minSpeedToWalkAnim        = .2f;
+
     [Header("Locomotion")]
     [Header("Walk")]
     public float            m_maxWalkSpeed              = 7;
@@ -128,7 +130,7 @@ public class PlayerController : MonoBehaviour
 
         m_spriteRenderer.flipX = m_walkSpeed < 0.0f;
 
-        if (Mathf.Abs(m_walkSpeed) > 0.002f)
+        if (Mathf.Abs(m_walkSpeed) > m_minSpeedToWalkAnim)
         {
             m_state = eStates.Walking;
         }
@@ -225,10 +227,10 @@ public class PlayerController : MonoBehaviour
         this.transform.position = CheckCollision(   this.transform.position,
                                                     this.transform.position + Time.deltaTime * Physics.gravity * .6f);
 
-        if (this.transform.position.y < GROUND_Y_VALUE_TO_DELETE)
-        {
-            this.transform.position = new Vector3(this.transform.position.x, GROUND_Y_VALUE_TO_DELETE, this.transform.position.z);
-        }
+        //if (this.transform.position.y < GROUND_Y_VALUE_TO_DELETE)
+        //{
+        //    this.transform.position = new Vector3(this.transform.position.x, GROUND_Y_VALUE_TO_DELETE, this.transform.position.z);
+        //}
     }
 
     // ======================================================================================
