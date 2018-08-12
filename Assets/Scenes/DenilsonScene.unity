@@ -369,6 +369,17 @@ Prefab:
       propertyPath: DelimiterY
       value: 0.25
       objectReference: {fileID: 0}
+    - target: {fileID: 114764228390534894, guid: 6e7ba0085f1cc0141ad580fe608c296a,
+        type: 2}
+      propertyPath: PrefabTurret
+      value: 
+      objectReference: {fileID: 1137322905877632, guid: 4daec38786652b1428fef8aa2702f30c,
+        type: 2}
+    - target: {fileID: 114764228390534894, guid: 6e7ba0085f1cc0141ad580fe608c296a,
+        type: 2}
+      propertyPath: TurretAngleSteps
+      value: 45
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e7ba0085f1cc0141ad580fe608c296a, type: 2}
   m_IsPrefabAsset: 0
