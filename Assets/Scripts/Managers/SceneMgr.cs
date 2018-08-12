@@ -46,8 +46,16 @@ public class SceneMgr : MonoBehaviour
         float TimeLeft = Mathf.Clamp(GameLength - Time.time, 0, GameLength);
         int MinutesLeft = (int)Mathf.Floor(TimeLeft / 60);
         int SecondsLeft = (int)Mathf.Ceil(TimeLeft - MinutesLeft*60.0f);
+        
 
         TimerLeft.GetComponent<UnityEngine.UI.Text>().text = "" + MinutesLeft;
-        TimerRight.GetComponent<UnityEngine.UI.Text>().text = "" + SecondsLeft;
+        if (SecondsLeft < 10)
+        {
+            TimerRight.GetComponent<UnityEngine.UI.Text>().text = "0" + SecondsLeft;
+        }
+        else
+        {
+            TimerRight.GetComponent<UnityEngine.UI.Text>().text = "" + SecondsLeft;
+        }
     }
 }
