@@ -4,7 +4,25 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public enum eStates
+    {
+        Idle,
+        Walking,
+        JetpackUp,
+        Falling,
+        Dashing
+    }
+
+
     // -------------------------------- PUBLIC ATTRIBUTES -------------------------------- //
+    [Header("Animation")]
+    public Animator         m_animator;
+    public SpriteRenderer   m_spriteRenderer;
+    public string           m_isRunningBoolParam        = "IsRunning";
+    public string           m_isDashingBoolParam        = "IsDashing";
+    public string           m_isJetpackUpBoolParam      = "IsJetpackUp";
+    public string           m_isFallingBoolParam        = "IsFalling";
+
     [Header("Locomotion")]
     [Header("Walk")]
     public float            m_maxWalkSpeed              = 7;
@@ -46,6 +64,8 @@ public class PlayerController : MonoBehaviour
     private Vector2         m_dashDirection             = Vector2.zero;
     private float           m_dashCooldownTimer         = 0;
 
+    private eStates         m_state;
+
     // DEFINES
     private const float     MIN_SPEED_TO_MOVE           = 0.1f;
     private const float     GROUND_Y_VALUE_TO_DELETE    = -2.5f;
@@ -80,6 +100,7 @@ public class PlayerController : MonoBehaviour
         // update position
         UpdateTransform(horizontal, vertical, enableJetPack, doDash);
         UpdateGravity();
+        UpdateAnimator();
 	}
 
 
@@ -94,8 +115,8 @@ public class PlayerController : MonoBehaviour
     private void UpdateTransform(float _inputHorizontal, float _inputVertical, bool _jetpackUp, bool _doDash)
     {
         UpdateWalk(_inputHorizontal);
-        UpdateDash(_inputHorizontal, _inputVertical, _doDash);
         UpdateJetpack(_jetpackUp);
+        UpdateDash(_inputHorizontal, _inputVertical, _doDash);
     }
 
     // ======================================================================================
@@ -105,15 +126,15 @@ public class PlayerController : MonoBehaviour
         m_walkSpeed = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
         this.transform.position += Vector3.right * Time.deltaTime * m_walkSpeed;
 
-        gameObject.GetComponent<SpriteRenderer>().flipX = m_walkSpeed < 0.0f;
+        m_spriteRenderer.flipX = m_walkSpeed < 0.0f;
 
         if (Mathf.Abs(m_walkSpeed) > 0.002f)
         {
-            gameObject.GetComponent<Animator>().SetBool("IsRunning", true);
+            m_state = eStates.Walking;
         }
         else
         {
-            gameObject.GetComponent<Animator>().SetBool("IsRunning", false);
+            m_state = eStates.Idle;
         }
     }
 
@@ -132,6 +153,7 @@ public class PlayerController : MonoBehaviour
 
         if (m_jetpackFuel < m_maxJetpackFuel)
         {
+            m_state = eStates.JetpackUp;
             GUIMgr.JetPackFueldSlider.fillRect.gameObject.SetActive(true);
             GUIMgr.JetPackFueldSlider.value = 1 - m_jetpackFuel / m_maxJetpackFuel;
         }
@@ -192,6 +214,8 @@ public class PlayerController : MonoBehaviour
         {
             this.transform.position = CheckCollision(   this.transform.position,
                                                         this.transform.position + new Vector3(m_dashDirection.x, m_dashDirection.y) * Time.deltaTime * m_dashMaxSpeed * m_dashSpeed.Evaluate(m_dashTimer / m_dashDuration));
+
+            m_state = eStates.Dashing;
         }
     }
 
@@ -232,4 +256,45 @@ public class PlayerController : MonoBehaviour
         return finalEndPos;
     }
 
+    // ======================================================================================
+    private void UpdateAnimator ()
+    {
+        switch(m_state)
+        {
+            case eStates.Idle:
+                m_animator.SetBool(m_isDashingBoolParam, false);
+                m_animator.SetBool(m_isFallingBoolParam, false);
+                m_animator.SetBool(m_isJetpackUpBoolParam, false);
+                m_animator.SetBool(m_isRunningBoolParam, false);
+                break;
+
+            case eStates.Walking:
+                m_animator.SetBool(m_isDashingBoolParam, false);
+                m_animator.SetBool(m_isFallingBoolParam, false);
+                m_animator.SetBool(m_isJetpackUpBoolParam, false);
+                m_animator.SetBool(m_isRunningBoolParam, true);
+                break;
+
+            case eStates.JetpackUp:
+                m_animator.SetBool(m_isDashingBoolParam, false);
+                m_animator.SetBool(m_isFallingBoolParam, false);
+                m_animator.SetBool(m_isJetpackUpBoolParam, true);
+                m_animator.SetBool(m_isRunningBoolParam, false);
+                break;
+
+            case eStates.Falling:
+                m_animator.SetBool(m_isDashingBoolParam, false);
+                m_animator.SetBool(m_isFallingBoolParam, true);
+                m_animator.SetBool(m_isJetpackUpBoolParam, false);
+                m_animator.SetBool(m_isRunningBoolParam, false);
+                break;
+                
+            case eStates.Dashing:
+                m_animator.SetBool(m_isDashingBoolParam, true);
+                m_animator.SetBool(m_isFallingBoolParam, false);
+                m_animator.SetBool(m_isJetpackUpBoolParam, false);
+                m_animator.SetBool(m_isRunningBoolParam, false);
+                break;
+        }
+    }
 }
