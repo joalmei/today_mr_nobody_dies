@@ -179,7 +179,7 @@ public class PlayerController : MonoBehaviour
 
         float nextSpeedMag = Mathf.Abs(nextSpeed);
         float prevSpeedMag = Mathf.Abs(m_walkSpeed);
-
+        
         bool isStartingWalk = nextSpeed > prevSpeedMag;
 
         m_walkSpeed = nextSpeed;
