@@ -58,6 +58,12 @@ public class PlayerController : MonoBehaviour
     [Header("Create Ground")]
     public float            m_groundOffset              = 1;
 
+    [Header("SFX")]
+    public AudioSource      m_dashSFX;
+    public AudioSource      m_jetpackSFX;
+    public AudioSource      m_deathSFX;
+    public AudioSource      m_damageSFX;
+
     public static PlayerController Player1 { get; protected set; }
 
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
@@ -142,26 +148,49 @@ public class PlayerController : MonoBehaviour
         Vector3 deltaPos    = finalPos - initialPos;
 
         // update animation state
+        eStates nextState;
         if (isDashing)
         {
-            m_state = eStates.Dashing;
+            nextState = eStates.Dashing;
         }
         else if (deltaPos.y > m_maxDeltaYForPlane)
         {
-            m_state = eStates.JetpackUp;
+            nextState = eStates.JetpackUp;
         }
         else if (deltaPos.y < 0)
         {
-            m_state = eStates.Falling;
+            nextState = eStates.Falling;
         }
         else if (isWalking)
         {
-            m_state = eStates.Walking;
+            nextState = eStates.Walking;
         }
         else
         {
-            m_state = eStates.Idle;
+            nextState = eStates.Idle;
         }
+
+        // sfx
+        if (nextState == eStates.Dashing && m_state != nextState)
+        {
+            m_jetpackSFX.Stop();
+            m_dashSFX.Play();
+        }
+        else if (nextState == eStates.JetpackUp)
+        {
+            m_jetpackSFX.loop = true;
+
+            if (m_jetpackSFX.isPlaying)
+            {
+                m_jetpackSFX.Play();
+            }
+        }
+        else
+        {
+            m_jetpackSFX.loop = false;
+        }
+
+        m_state = nextState;
     }
 
     // ======================================================================================
