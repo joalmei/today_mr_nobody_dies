@@ -180,7 +180,7 @@ public class PlayerController : MonoBehaviour
         {
             m_jetpackSFX.loop = true;
 
-            if (m_jetpackSFX.isPlaying)
+            if (!m_jetpackSFX.isPlaying)
             {
                 m_jetpackSFX.Play();
             }
