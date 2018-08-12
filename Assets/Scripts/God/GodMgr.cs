@@ -154,7 +154,7 @@ public class GodMgr : MonoBehaviour
 
                     LastTurret = Time.time;
 
-                    PlacedTurret.GetComponent<Turret>().Activate(GetMouseWorldPos() - PlacedTurret.transform.position);
+                    PlacedTurret.GetComponent<BulletTurret>().Activate(GetMouseWorldPos() - PlacedTurret.transform.position);
                 }
             }
         } else if (CurrentPower == GodPower.Trap)
