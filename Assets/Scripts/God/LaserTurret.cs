@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Turret : MonoBehaviour
+public class LaserTurret : MonoBehaviour
 {
     public float FirePeriod;
-    public Vector3 Direction;
+    public float Angle;
     public bool Active = false;
 
-    public GameObject PrefabBullet;
+    public GameObject PrefabLaser;
 
     private float LastFire = 0.0f;
 
-    public void Activate(Vector3 DirectionParam)
+    public void Activate(float AngleParam)
     {
         Active = true;
-        Direction = DirectionParam;
+        Angle = AngleParam;
         LastFire = Time.time;
     }
 
@@ -26,15 +26,12 @@ public class Turret : MonoBehaviour
         {
             if (Time.time > LastFire + FirePeriod)
             {
-                GameObject Bullet = Instantiate(
-                    PrefabBullet,
+                GameObject Laser = Instantiate(
+                    PrefabLaser,
                     gameObject.transform.position,
-                    Quaternion.identity
+                    Quaternion.Euler(0.0f, 0.0f, Angle)
                 ) as GameObject;
-
-                Bullet.GetComponent<Bullet>().Direction = Direction;
-                Bullet.GetComponent<Bullet>().Turret = gameObject;
-
+                
                 LastFire = Time.time;
             }
         }
