@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 0
-  ExplosionRadius: 2
+  ExplosionRadius: 0.7
   PrefabExplosion: {fileID: 1573026020291164, guid: 2c6cdd4a641c6d14d88d36db9abde214,
     type: 2}
 --- !u!135 &135942072682949562

@@ -104,6 +104,17 @@ public class PlayerController : MonoBehaviour
         // walk
         m_walkSpeed = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
         this.transform.position += Vector3.right * Time.deltaTime * m_walkSpeed;
+
+        gameObject.GetComponent<SpriteRenderer>().flipX = m_walkSpeed < 0.0f;
+
+        if (Mathf.Abs(m_walkSpeed) > 0.002f)
+        {
+            gameObject.GetComponent<Animator>().SetBool("IsRunning", true);
+        }
+        else
+        {
+            gameObject.GetComponent<Animator>().SetBool("IsRunning", false);
+        }
     }
 
     // ======================================================================================

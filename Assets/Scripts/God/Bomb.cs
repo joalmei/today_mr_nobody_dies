@@ -17,7 +17,7 @@ public class Bomb : ActionOnTouch
         print("Collided!");
         Collider[] ExplosionColliders = Physics.OverlapSphere(
             gameObject.transform.position,
-            ExplosionRadius*0.16f, // Magic, don't touch.
+            ExplosionRadius,
             LayerMask.GetMask("Player")
         );
 
@@ -27,7 +27,7 @@ public class Bomb : ActionOnTouch
             Quaternion.identity
         ) as GameObject;
 
-        ExplosionInstance.transform.localScale = Vector3.one * ExplosionRadius;
+        ExplosionInstance.transform.localScale = Vector3.one * ExplosionRadius / 0.16f; // Magic, don't touch.
 
         foreach (Collider collider in ExplosionColliders)
         {

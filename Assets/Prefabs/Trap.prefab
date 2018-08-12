@@ -122,10 +122,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  ExplodeTime: 2.5
+  ExplodeTime: 0.9
   ActivateDistance: 0.5
   GracePeriod: 2
-  ExplosionVFX: {fileID: 100004, guid: 2857e183f4cd3df4e9096e5b578bd32f, type: 2}
+  ExplosionRadius: 0.75
+  PrefabExplosion: {fileID: 1573026020291164, guid: 2c6cdd4a641c6d14d88d36db9abde214,
+    type: 2}
 --- !u!135 &135306406528444748
 SphereCollider:
   m_ObjectHideFlags: 1

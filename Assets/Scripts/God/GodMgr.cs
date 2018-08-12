@@ -187,10 +187,6 @@ public class GodMgr : MonoBehaviour
             {
                 if (IsPlacingTurret)
                 {
-                    IsPlacingTurret = false;
-                    MaySwitchPowers = true;
-                    PlacedTurret = null;
-
                     LastTurret = Time.time;
 
                     if (AngleIndicator)
@@ -209,7 +205,11 @@ public class GodMgr : MonoBehaviour
                         }
                     }
                     
-                    PlacedTurret.GetComponent<LaserTurret>().Activate(-WinningAngle);
+                    PlacedTurret.GetComponent<LaserTurret>().Activate(WinningAngle);
+
+                    IsPlacingTurret = false;
+                    MaySwitchPowers = true;
+                    PlacedTurret = null;
                 }
             }
         } else if (CurrentPower == GodPower.Trap)

@@ -10,7 +10,9 @@ public class Trap : MonoBehaviour {
     public float ExplodeTime;
     public float ActivateDistance;
     public float GracePeriod;
-    public GameObject ExplosionVFX;
+
+    public float ExplosionRadius = 1.0f;
+    public GameObject PrefabExplosion;
 
     private bool Activated;
     private float SpawnedTime;
@@ -92,9 +94,31 @@ public class Trap : MonoBehaviour {
 
         if (Activated && Time.time > ActivatedTime + ExplodeTime)
         {
+            Collider[] ExplosionColliders = Physics.OverlapSphere(
+                gameObject.transform.position,
+                ExplosionRadius, 
+                LayerMask.GetMask("Player")
+            );
+
+            GameObject ExplosionInstance = Instantiate(
+                PrefabExplosion,
+                gameObject.transform.position,
+                Quaternion.identity
+            ) as GameObject;
+
+            ExplosionInstance.transform.localScale = Vector3.one * ExplosionRadius / 0.16f; // Magic, don't touch.
+
+            foreach (Collider collider in ExplosionColliders)
+            {
+                PlayerController player = collider.gameObject.GetComponent<PlayerController>();
+                if (player != null)
+                {
+                    player.TakeDamage();
+                    print("WithPlayer");
+                }
+            }
+
             Destroy(gameObject);
-            if (ExplosionVFX != null)
-                Instantiate(ExplosionVFX, gameObject.transform.position, Quaternion.identity);
         }
 	}
 }
