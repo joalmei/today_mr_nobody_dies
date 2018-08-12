@@ -26,6 +26,12 @@ public class PlayerController : MonoBehaviour
     public float            m_minSpeedToStartWalkAnim   = .2f;
     public float            m_minSpeedToStopWalkAnim    = .2f;
 
+    public float            m_maxDeltaYForPlane         = .05f;
+
+    [Header("Physics")]
+    [Range(0,1)]
+    public float            m_gravityRatio              = .4f;
+
     [Header("Locomotion")]
     [Header("Walk")]
     public float            m_maxWalkSpeed              = 7;
@@ -97,13 +103,15 @@ public class PlayerController : MonoBehaviour
         float   vertical        = Input.GetAxis("Vertical");
         bool    enableJetPack   = Input.GetButton("Jump");
         bool    doDash          = Input.GetButtonDown("Dash");
-        //bool    createGround    = Input.GetButton("Create Ground");
+        bool    createGnd       = Input.GetButton("Create Ground");
 
 
         // update position
         UpdateTransform(horizontal, vertical, enableJetPack, doDash);
-        UpdateGravity();
         UpdateAnimator();
+
+        // powers
+        CreateGround(createGnd);
 	}
 
 
@@ -117,14 +125,50 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     private void UpdateTransform(float _inputHorizontal, float _inputVertical, bool _jetpackUp, bool _doDash)
     {
-        UpdateWalk(_inputHorizontal);
-        UpdateJetpack(_jetpackUp);
-        UpdateDash(_inputHorizontal, _inputVertical, _doDash);
+        Vector3 initialPos  = this.transform.position;
+
+        bool isWalking      = UpdateWalk(_inputHorizontal);
+        //Vector3 walkPos     = this.transform.position;
+
+        bool isJetpacking   = UpdateJetpack(_jetpackUp);
+        //Vector3 jetPackPos  = this.transform.position;
+
+        bool isDashing      = UpdateDash(_inputHorizontal, _inputVertical, _doDash);
+        //Vector3 dashPos     = this.transform.position;
+
+        bool isFalling      = UpdateGravity();
+        Vector3 finalPos    = this.transform.position;
+
+        Vector3 deltaPos    = finalPos - initialPos;
+
+        // update animation state
+        if (isDashing)
+        {
+            m_state = eStates.Dashing;
+        }
+        else if (deltaPos.y > m_maxDeltaYForPlane)
+        {
+            m_state = eStates.JetpackUp;
+        }
+        else if (deltaPos.y < 0)
+        {
+            m_state = eStates.Falling;
+        }
+        else if (isWalking)
+        {
+            m_state = eStates.Walking;
+        }
+        else
+        {
+            m_state = eStates.Idle;
+        }
     }
 
     // ======================================================================================
-    private void UpdateWalk (float _inputHorizontal)
+    private bool UpdateWalk (float _inputHorizontal)
     {
+        bool animate = false;
+
         // walk
         float nextSpeed  = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
         this.transform.position += Vector3.right * Time.deltaTime * nextSpeed;
@@ -138,21 +182,21 @@ public class PlayerController : MonoBehaviour
         
         bool isStartingWalk = nextSpeed > prevSpeedMag;
 
+        m_walkSpeed = nextSpeed;
+
         if (isStartingWalk && nextSpeedMag > m_minSpeedToStartWalkAnim || !isStartingWalk && nextSpeedMag > m_minSpeedToStopWalkAnim)
         {
-            m_state = eStates.Walking;
-        }
-        else
-        {
-            m_state = eStates.Idle;
+            animate = true;
         }
 
-        m_walkSpeed = nextSpeed;
+        return animate;
     }
 
     // ======================================================================================
-    private void UpdateJetpack(bool _jetpackUp)
+    private bool UpdateJetpack(bool _jetpackUp)
     {
+        bool animate = false;
+
         // Fuel
         if (_jetpackUp)
         {
@@ -165,7 +209,7 @@ public class PlayerController : MonoBehaviour
 
         if (m_jetpackFuel < m_maxJetpackFuel)
         {
-            m_state = eStates.JetpackUp;
+            animate = true;
             GUIMgr.JetPackFueldSlider.fillRect.gameObject.SetActive(true);
             GUIMgr.JetPackFueldSlider.value = 1 - m_jetpackFuel / m_maxJetpackFuel;
         }
@@ -195,11 +239,15 @@ public class PlayerController : MonoBehaviour
         {
             this.transform.position = CheckCollision(this.transform.position, this.transform.position + Vector3.up * Time.deltaTime * m_jetPackSpeed);
         }
+
+        return animate;
     }
 
     // ======================================================================================
-    private void UpdateDash(float _inputHorizontal, float _inputVertical, bool _doDash)
+    private bool UpdateDash(float _inputHorizontal, float _inputVertical, bool _doDash)
     {
+        bool animate = false;
+
         m_dashCooldownTimer -= Time.deltaTime;
 
         // Init Dash
@@ -227,20 +275,26 @@ public class PlayerController : MonoBehaviour
             this.transform.position = CheckCollision(   this.transform.position,
                                                         this.transform.position + new Vector3(m_dashDirection.x, m_dashDirection.y) * Time.deltaTime * m_dashMaxSpeed * m_dashSpeed.Evaluate(m_dashTimer / m_dashDuration));
 
-            m_state = eStates.Dashing;
+            animate = true;
         }
+
+        return animate;
     }
 
     // ======================================================================================
-    private void UpdateGravity ()
+    private bool UpdateGravity()
     {
-        this.transform.position = CheckCollision(   this.transform.position,
-                                                    this.transform.position + Time.deltaTime * Physics.gravity * .6f);
+        Vector3 finalPos = CheckCollision(  this.transform.position,
+                                            this.transform.position + Time.deltaTime * Physics.gravity * m_gravityRatio);
 
-        if (this.transform.position.y < GROUND_Y_VALUE_TO_DELETE)
+        if (this.transform.position == finalPos)
         {
-            this.transform.position = new Vector3(this.transform.position.x, GROUND_Y_VALUE_TO_DELETE, this.transform.position.z);
+            return false;
         }
+
+        this.transform.position = finalPos;
+
+        return true;
     }
 
     // ======================================================================================
@@ -264,7 +318,7 @@ public class PlayerController : MonoBehaviour
         }
 
         finalEndPos.x = Mathf.Clamp(finalEndPos.x, SceneMgr.MinX + m_width / 2, SceneMgr.MaxX - m_width / 2);
-        finalEndPos.y = Mathf.Clamp(finalEndPos.y, SceneMgr.MinY, SceneMgr.MaxY /*- m_height / 2*/);
+        finalEndPos.y = Mathf.Clamp(finalEndPos.y, SceneMgr.MinY, SceneMgr.MaxY - m_height );
         return finalEndPos;
     }
 
@@ -308,5 +362,12 @@ public class PlayerController : MonoBehaviour
                 m_animator.SetBool(m_isRunningBoolParam, false);
                 break;
         }
+    }
+
+    // ======================================================================================
+    // Powers
+    private void CreateGround (bool _doCreate)
+    {
+
     }
 }

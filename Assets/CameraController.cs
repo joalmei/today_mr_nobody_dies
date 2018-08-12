@@ -5,17 +5,17 @@ using UnityEngine;
 public class CameraController : MonoBehaviour {
 
     public Transform m_player;
-    public Vector3 m_offset;
-    public float m_starting_y;
-    public float m_approach_factor;
-    public float m_max_size;
-    public float m_min_size;
-    public float valid_margin;
+    public Vector3  m_offset;
+    public float    m_starting_y;
+    public float    m_approach_factor;
+    public float    m_max_size;
+    public float    m_min_size;
+    public float    valid_margin;
 
-    private float m_aspect;
-    private float m_time;
-    private Camera m_camera;
-    private float max_time;
+    private float   m_aspect;
+    private float   m_time;
+    private Camera  m_camera;
+    private float   max_time;
     private Vector2 min_pos;
     private Vector2 max_pos;
 
@@ -53,6 +53,16 @@ public class CameraController : MonoBehaviour {
         }
         m_offset.y = m_starting_y * (1 - m_time / max_time);
         transform.position = m_player.position + m_offset;
+
+        float camVertExtent = m_camera.orthographicSize;
+        float camHorzExtent = m_camera.aspect * camVertExtent;
+
+        transform.position = new Vector3(
+                Mathf.Clamp(transform.position.x, SceneMgr.MinX + camHorzExtent, SceneMgr.MaxX - camHorzExtent),
+                Mathf.Clamp(transform.position.y, SceneMgr.MinY + camVertExtent, SceneMgr.MaxY - camVertExtent),
+                transform.position.z
+            );
+
         float x_min = transform.position.x - m_aspect * m_camera.orthographicSize;
         float x_max = transform.position.x + m_aspect * m_camera.orthographicSize;
         float y_min = transform.position.y - m_camera.orthographicSize;

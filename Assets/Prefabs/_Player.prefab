@@ -155,8 +155,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.1, y: 0.1, z: 1}
-  m_Center: {x: 0, y: 0.05, z: 0}
+  m_Size: {x: 0.1, y: 0.15, z: 1}
+  m_Center: {x: 0, y: 0.075, z: 0}
 --- !u!95 &95495026705845062
 Animator:
   serializedVersion: 3
@@ -192,6 +192,10 @@ MonoBehaviour:
   m_isDashingBoolParam: IsDashing
   m_isJetpackUpBoolParam: IsJetpackUp
   m_isFallingBoolParam: IsFalling
+  m_minSpeedToStartWalkAnim: 0.2
+  m_minSpeedToStopWalkAnim: 0.2
+  m_maxDeltaYForPlane: 0.05
+  m_gravityRatio: 0.25
   m_maxWalkSpeed: 5
   m_walkAcc: 10
   m_dashSpeed:
@@ -236,15 +240,15 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_dashMaxSpeed: 12
-  m_dashDuration: 0.15
+  m_dashMaxSpeed: 10
+  m_dashDuration: 0.3
   m_dashCoolDownDuration: 0.3
   m_maxJetPackSpeed: 12
   m_jetPackAccUp: 10
-  m_jetPackAccDown: 6
+  m_jetPackAccDown: 13
   m_maxJetpackFuel: 0.5
   m_width: 0.1
-  m_height: 0.15
+  m_height: 0.1
   m_groundOffset: 1
 --- !u!212 &212862632680170332
 SpriteRenderer:
