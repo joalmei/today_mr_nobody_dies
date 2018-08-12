@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour
         {
             m_state = eStates.JetpackUp;
         }
-        else if (deltaPos.y < -m_maxDeltaYForPlane)
+        else if (deltaPos.y < 0)
         {
             m_state = eStates.Falling;
         }

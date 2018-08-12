@@ -52,7 +52,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BombMaximumSpeed: 10
-  PowerCooldown: 2.5
+  BombPowerCooldown: 0.7
+  TurretPowerCooldown: 1.2
+  TrapPowerCooldown: 1.5
+  DelimiterX: 0.187
+  DelimiterY: 0.25
   PrefabBomb: {fileID: 1814870996839376, guid: ef260c7386267364b88477e4899c2b37, type: 2}
   PrefabTrap: {fileID: 1080699129292870, guid: c831f5af0d5ec824f9f80755a903f1de, type: 2}
   PrefabTurret: {fileID: 1137322905877632, guid: ff395535e5d304f48ae806b850df7bfa,
