@@ -14,6 +14,7 @@ public class LaserTurret : MonoBehaviour
 
     public void Activate(float AngleParam)
     {
+        print("Turret active");
         Active = true;
         Angle = AngleParam;
         LastFire = Time.time;
@@ -29,8 +30,10 @@ public class LaserTurret : MonoBehaviour
                 GameObject Laser = Instantiate(
                     PrefabLaser,
                     gameObject.transform.position,
-                    Quaternion.Euler(0.0f, 0.0f, Angle)
+                    Quaternion.Euler(0.0f, 0.0f, -Angle)
                 ) as GameObject;
+
+                Laser.GetComponent<Laser>().Activate();
                 
                 LastFire = Time.time;
             }

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Laser : MonoBehaviour {
-    private bool Activated;
+    private bool Activated = false;
     private float ActivatedStart;
+
+    private bool DamagedPlayer = false;
 
     public float TimeBeforeDamage;
     public float DamageTime;
@@ -15,16 +17,55 @@ public class Laser : MonoBehaviour {
         ActivatedStart = Time.time;
 
         Renderer LaserRenderer = gameObject.GetComponent<Renderer>();
-        //LaserRenderer.material.color = 
+        Color CurrentColor = LaserRenderer.material.GetColor("_Color");
+        CurrentColor.a = 0.5f;
+        LaserRenderer.material.SetColor("_Color", CurrentColor);
     }
 
 	// Use this for initialization
 	void Start () {
-        Activated = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		//if (Activated && Time.time > ActivatedStart + )
+        if (Activated)
+        {
+            if (Time.time < ActivatedStart + TimeBeforeDamage)
+            {
+                // Do nothing
+            } else if (Time.time < ActivatedStart + TimeBeforeDamage + DamageTime)
+            {
+                // Make it opaque
+                Renderer LaserRenderer = gameObject.GetComponent<Renderer>();
+                Color CurrentColor = LaserRenderer.material.GetColor("_Color");
+                CurrentColor.a = 1.0f;
+                LaserRenderer.material.SetColor("_Color", CurrentColor);
+
+                // Do damage
+                Vector3 LaserOrigin = gameObject.transform.position;
+                float LaserAngle = Mathf.Deg2Rad*gameObject.transform.rotation.eulerAngles.z;
+                Vector3 LaserDirection = new Vector3(Mathf.Cos(LaserAngle), Mathf.Sin(LaserAngle), 0);
+                Ray LaserRay = new Ray(LaserOrigin, LaserDirection);
+                RaycastHit[] Hits = Physics.RaycastAll(LaserRay);
+
+                if (!DamagedPlayer)
+                {
+                    foreach (RaycastHit hit in Hits)
+                    {
+                        PlayerController player = hit.collider.gameObject.GetComponent<PlayerController>();
+                        if (player)
+                        {
+                            DamagedPlayer = true;
+                            player.TakeDamage();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Disappear
+                Destroy(gameObject);
+            }
+        }
 	}
 }

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33174216633223598}
   - component: {fileID: 23024704341160098}
   - component: {fileID: 65619041256466394}
-  - component: {fileID: 114199772051541030}
+  - component: {fileID: 114391672822109514}
   m_Layer: 0
   m_Name: LaserTurret
   m_TagString: Untagged
@@ -97,7 +97,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114199772051541030
+--- !u!114 &114391672822109514
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -105,11 +105,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1137322905877632}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b064beef4c494a45b759f95d0363d88, type: 3}
+  m_Script: {fileID: 11500000, guid: 61c1980576418114aa088859664ec117, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FirePeriod: 0.75
-  Direction: {x: 0, y: 0, z: 0}
+  FirePeriod: 1.8
+  Angle: 0
   Active: 0
-  PrefabBullet: {fileID: 1741831967001372, guid: e63d87ac9c2e07d4291d7d3d8ac7f757,
+  PrefabLaser: {fileID: 1419813997656540, guid: 737440a97c535c042b8eb1720779e220,
     type: 2}

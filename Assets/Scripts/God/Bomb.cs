@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bomb : ActionOnTouch
 {
     public float ExplosionRadius = 1.0f;
+    public GameObject PrefabExplosion;
 
     public override void PlayerTouched(PlayerController player)
     {
@@ -16,11 +17,19 @@ public class Bomb : ActionOnTouch
         print("Collided!");
         Collider[] ExplosionColliders = Physics.OverlapSphere(
             gameObject.transform.position,
-            ExplosionRadius,
+            ExplosionRadius*0.16f, // Magic, don't touch.
             LayerMask.GetMask("Player")
         );
 
-        foreach(Collider collider in ExplosionColliders)
+        GameObject ExplosionInstance = Instantiate(
+            PrefabExplosion,
+            gameObject.transform.position,
+            Quaternion.identity
+        ) as GameObject;
+
+        ExplosionInstance.transform.localScale = Vector3.one * ExplosionRadius;
+
+        foreach (Collider collider in ExplosionColliders)
         {
             PlayerController player = collider.gameObject.GetComponent<PlayerController>();
             if (player != null)
@@ -36,7 +45,6 @@ public class Bomb : ActionOnTouch
 
     // Use this for initialization
     void Start () {
-		
 	}
 	
 	// Update is called once per frame
