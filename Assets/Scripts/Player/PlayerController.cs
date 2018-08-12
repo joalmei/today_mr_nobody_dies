@@ -61,8 +61,6 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Player1 { get; protected set; }
 
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
-    private int             m_nbLives                   = 4;
-
     // walk
     private float           m_walkSpeed                 = 0;
 
@@ -100,38 +98,26 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     public void Update ()
     {
-        if (!SceneMgr.IsGameOver)
-        {
-
-            // get input
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-            bool enableJetPack = Input.GetButton("Jump");
-            bool doDash = Input.GetButtonDown("Dash");
-            bool createGnd = Input.GetButton("Create Ground");
+        // get input
+        float   horizontal      = Input.GetAxis("Horizontal");
+        float   vertical        = Input.GetAxis("Vertical");
+        bool    enableJetPack   = Input.GetButton("Jump");
+        bool    doDash          = Input.GetButtonDown("Dash");
+        bool    createGnd       = Input.GetButton("Create Ground");
 
 
-            // update position
-            UpdateTransform(horizontal, vertical, enableJetPack, doDash);
-            UpdateAnimator();
+        // update position
+        UpdateTransform(horizontal, vertical, enableJetPack, doDash);
+        UpdateAnimator();
 
-            // powers
-            CreateGround(createGnd);
-        }
+        // powers
+        CreateGround(createGnd);
 	}
 
 
     // ======================================================================================
     public void TakeDamage()
     {
-        m_nbLives--;
-
-        GUIMgr.SetLives(m_nbLives);
-
-        if (m_nbLives <= 0)
-        {
-            SceneMgr.SetGameOver(SceneMgr.ePlayer.Player1);
-        }
     }
 
     // ======================================================================================

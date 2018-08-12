@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class SceneMgr : MonoBehaviour
 {
-    public enum ePlayer
-    {
-        Player1,
-        Player2
-    };
-
     // -------------------------------- PUBLIC ATTRIBUTES -------------------------------- //
     public float            m_globalZ = 0;
     public float            m_max_time = 60;
@@ -26,7 +20,7 @@ public class SceneMgr : MonoBehaviour
     public static float     MaxX { get { return m_manager.m_limitRight.position.x; } }
     public static float     MinX { get { return m_manager.m_limitLeft.position.x; } }
 
-    public static bool     IsGameOver { get; private set; }
+    public static bool      isGameOver;
 
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
     private static SceneMgr m_manager;
@@ -39,24 +33,6 @@ public class SceneMgr : MonoBehaviour
     {
         Debug.Assert(m_manager == null, this.gameObject.name + " - SceneMgr : scene manager must be unique!");
         m_manager = this;
-        IsGameOver = false;
+        isGameOver = false;
 	}
-
-    // ======================================================================================
-    public static void SetGameOver (ePlayer _player)
-    {
-        IsGameOver = true;
-
-        GUIMgr.GameOverPanel.SetActive(true);
-
-        switch (_player)
-        {
-            case ePlayer.Player1:
-                GUIMgr.GameOverP1Panel.SetActive(true);
-                break;
-            case ePlayer.Player2:
-                GUIMgr.GameOverP2Panel.SetActive(true);
-                break;
-        }
-    }
 }

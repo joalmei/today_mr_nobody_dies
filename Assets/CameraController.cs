@@ -42,36 +42,32 @@ public class CameraController : MonoBehaviour {
 
 	// Update is called once per frame
 	void LateUpdate () {
-        if (!SceneMgr.IsGameOver)
+        if (m_time < max_time)
         {
-
-            if (m_time < max_time)
-            {
-                m_time += Time.deltaTime;
-                m_camera.orthographicSize = m_max_size - (m_max_size - m_min_size) / max_time * m_time;
-            }
-            else
-            {
-                SceneMgr.SetGameOver(SceneMgr.ePlayer.Player2);
-            }
-            m_offset.y = m_starting_y * (1 - m_time / max_time);
-            transform.position = m_player.position + m_offset;
-
-            float camVertExtent = m_camera.orthographicSize;
-            float camHorzExtent = m_camera.aspect * camVertExtent;
-
-            transform.position = new Vector3(
-                    Mathf.Clamp(transform.position.x, SceneMgr.MinX + camHorzExtent, SceneMgr.MaxX - camHorzExtent),
-                    Mathf.Clamp(transform.position.y, SceneMgr.MinY + camVertExtent, SceneMgr.MaxY - camVertExtent),
-                    transform.position.z
-                );
-
-            float x_min = transform.position.x - m_aspect * m_camera.orthographicSize;
-            float x_max = transform.position.x + m_aspect * m_camera.orthographicSize;
-            float y_min = transform.position.y - m_camera.orthographicSize;
-            float y_max = transform.position.y + m_camera.orthographicSize;
-            min_pos = new Vector2(x_min, y_min);
-            max_pos = new Vector2(x_max, y_max);
+            m_time += Time.deltaTime;
+            m_camera.orthographicSize = m_max_size - (m_max_size - m_min_size) / max_time * m_time;
         }
+        else
+        {
+            SceneMgr.isGameOver = true;
+        }
+        m_offset.y = m_starting_y * (1 - m_time / max_time);
+        transform.position = m_player.position + m_offset;
+
+        float camVertExtent = m_camera.orthographicSize;
+        float camHorzExtent = m_camera.aspect * camVertExtent;
+
+        transform.position = new Vector3(
+                Mathf.Clamp(transform.position.x, SceneMgr.MinX + camHorzExtent, SceneMgr.MaxX - camHorzExtent),
+                Mathf.Clamp(transform.position.y, SceneMgr.MinY + camVertExtent, SceneMgr.MaxY - camVertExtent),
+                transform.position.z
+            );
+
+        float x_min = transform.position.x - m_aspect * m_camera.orthographicSize;
+        float x_max = transform.position.x + m_aspect * m_camera.orthographicSize;
+        float y_min = transform.position.y - m_camera.orthographicSize;
+        float y_max = transform.position.y + m_camera.orthographicSize;
+        min_pos = new Vector2(x_min, y_min);
+        max_pos = new Vector2(x_max, y_max);
     }
 }
