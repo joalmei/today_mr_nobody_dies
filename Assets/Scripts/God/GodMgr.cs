@@ -11,6 +11,9 @@ public class GodMgr : MonoBehaviour
     public float TurretPowerCooldown = 2f;
     public float TrapPowerCooldown = 2f;
 
+    public float DelimiterX;
+    public float DelimiterY;
+
     public GameObject PrefabBomb;
     public GameObject PrefabTrap;
     public GameObject PrefabTurret;
@@ -50,6 +53,19 @@ public class GodMgr : MonoBehaviour
     }
 
     // ======================================================================================
+    private bool IsInGodRegion()
+    {
+        float ScaleX = Input.mousePosition.x / Screen.width;
+        float ScaleY = Input.mousePosition.y / Screen.height;
+
+        return (
+            ScaleX < DelimiterX ||
+            ScaleX > 1-DelimiterX ||
+            ScaleY > 1-DelimiterY
+        );
+    }
+
+    // ======================================================================================
     void Start ()
     {
         LastMousePositions = new Queue<Vector3>();
@@ -63,6 +79,8 @@ public class GodMgr : MonoBehaviour
     // ======================================================================================
     void FixedUpdate() {
         UpdatePowersGUI();
+
+        IsInGodRegion();
 
         if (MaySwitchPowers)
         {
@@ -82,21 +100,19 @@ public class GodMgr : MonoBehaviour
 
         if (CurrentPower == GodPower.Bomb)
         {
-            if (Input.GetButton("Fire1"))
+            if (!IsDraggingBomb && Time.time > LastBomb + BombPowerCooldown && IsInGodRegion() && Input.GetButton("Fire1"))
             {
-                if (!IsDraggingBomb && Time.time > LastBomb + BombPowerCooldown)
-                {
-                    MaySwitchPowers = false;
-                    IsDraggingBomb = true;
+                MaySwitchPowers = false;
+                IsDraggingBomb = true;
 
-                    DraggedBomb = Instantiate(
-                        PrefabBomb,
-                        GetMouseWorldPos(),
-                        Quaternion.identity
-                    ) as GameObject;
-                }
+                DraggedBomb = Instantiate(
+                    PrefabBomb,
+                    GetMouseWorldPos(),
+                    Quaternion.identity
+                ) as GameObject;
             }
-            else
+
+            if(!Input.GetButton("Fire1") || !IsInGodRegion())
             {
                 if (IsDraggingBomb)
                 {

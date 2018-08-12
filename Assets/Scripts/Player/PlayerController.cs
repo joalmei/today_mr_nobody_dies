@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviour
 
         m_spriteRenderer.flipX = m_walkSpeed < 0.0f;
 
-        if (Mathf.Abs(m_walkSpeed) > 0.002f)
+        if (Mathf.Abs(m_walkSpeed) > 1.2f)
         {
             m_state = eStates.Walking;
         }
