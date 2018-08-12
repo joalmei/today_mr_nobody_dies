@@ -21,7 +21,9 @@ public class PlayerController : MonoBehaviour
     public string           m_isRunningBoolParam        = "IsRunning";
     public string           m_isDashingBoolParam        = "IsDashing";
     public string           m_isJetpackUpBoolParam      = "IsJetpackUp";
-    public string           m_isFallingBoolParam        = "IsFalling";
+    public string           m_isFallingBoolParam = "IsFalling";
+    public string           m_tookDamageParam = "TookDamage";
+
 
     public float            m_minSpeedToStartWalkAnim   = .2f;
     public float            m_minSpeedToStopWalkAnim    = .2f;
@@ -118,6 +120,8 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     public void TakeDamage()
     {
+        m_animator.SetTrigger(m_tookDamageParam);
+        print("Took damage!");
     }
 
     // ======================================================================================
