@@ -19,6 +19,7 @@ public class Trap : MonoBehaviour {
     private bool BombState;
     private float LastSwitch;
     private float ActivatedTime;
+    private AudioSource m_audio;
     
     private void BombState0()
     {
@@ -32,7 +33,7 @@ public class Trap : MonoBehaviour {
 
         Renderer TrapRenderer = gameObject.GetComponent<Renderer>();
         TrapRenderer.material.SetColor("_Color", CurrentColor);
-
+        
     }
     private void BombState1()
     {
@@ -46,11 +47,14 @@ public class Trap : MonoBehaviour {
 
         Renderer TrapRenderer = gameObject.GetComponent<Renderer>();
         TrapRenderer.material.SetColor("_Color", CurrentColor);
+
+        m_audio.Play();
     }
 
     // Use this for initialization
     void Start ()
     {
+        m_audio = this.GetComponent<AudioSource>();
         Activated = false;
         SpawnedTime = Time.time;
         BombState0();

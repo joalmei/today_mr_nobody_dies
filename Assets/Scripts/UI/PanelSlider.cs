@@ -8,8 +8,7 @@ public class PanelSlider : MonoBehaviour
     public float    m_rightMax  = 0;
 
     public bool     m_debug     = false;
-
-    [ConditionalHide("m_debug", true)]
+    
     public float    m_testRatio;
     
 

@@ -42,6 +42,11 @@ public class CameraController : MonoBehaviour {
 
 	// Update is called once per frame
 	void LateUpdate () {
+        if (SceneMgr.IsGameOver)
+        {
+            return;
+        }
+
         if (m_time < max_time)
         {
             m_time += Time.deltaTime;
@@ -49,7 +54,7 @@ public class CameraController : MonoBehaviour {
         }
         else
         {
-            SceneMgr.isGameOver = true;
+            SceneMgr.SetGameOver(2);
         }
         m_offset.y = m_starting_y * (1 - m_time / max_time);
         transform.position = m_player.position + m_offset;

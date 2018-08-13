@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     public string           m_isDashingBoolParam        = "IsDashing";
     public string           m_isJetpackUpBoolParam      = "IsJetpackUp";
     public string           m_isFallingBoolParam        = "IsFalling";
+    public string           m_onDeath                   = "OnDeath";
 
     public float            m_minSpeedToStartWalkAnim   = .2f;
     public float            m_minSpeedToStopWalkAnim    = .2f;
@@ -81,6 +82,8 @@ public class PlayerController : MonoBehaviour
 
     private eStates         m_state;
 
+    private int m_nbLives = 3;
+
     // DEFINES
     private const float     MIN_SPEED_TO_MOVE           = 0.1f;
     private const float     GROUND_Y_VALUE_TO_DELETE    = -2.5f;
@@ -104,6 +107,11 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     public void Update ()
     {
+        if (SceneMgr.IsGameOver)
+        {
+            return;
+        }
+
         // get input
         float   horizontal      = Input.GetAxis("Horizontal");
         float   vertical        = Input.GetAxis("Vertical");
@@ -124,6 +132,24 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     public void TakeDamage()
     {
+        if (SceneMgr.IsGameOver)
+        {
+            return;
+        }
+
+        m_nbLives--;
+        GUIMgr.SetLives(m_nbLives);
+
+        if (m_nbLives <= 0)
+        {
+            SceneMgr.SetGameOver(1);
+            m_deathSFX.Play();
+            m_animator.SetTrigger(m_onDeath);
+        }
+        else
+        {
+            m_damageSFX.Play();
+        }
     }
 
     // ======================================================================================

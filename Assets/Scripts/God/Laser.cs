@@ -11,6 +11,11 @@ public class Laser : MonoBehaviour {
     public float TimeBeforeDamage;
     public float DamageTime;
 
+    public GameObject DamageSFX;
+
+    private bool Transition1;
+    private bool Transition2;
+
     public void Activate()
     {
         Activated = true;
@@ -33,8 +38,18 @@ public class Laser : MonoBehaviour {
             if (Time.time < ActivatedStart + TimeBeforeDamage)
             {
                 // Do nothing
+                if (!Transition1)
+                {
+                    Transition1 = true;
+                    gameObject.GetComponent<AudioSource>().Play();
+                }
             } else if (Time.time < ActivatedStart + TimeBeforeDamage + DamageTime)
             {
+                if (!Transition2)
+                {
+                    Transition2 = true;
+                    DamageSFX.GetComponent<AudioSource>().Play();
+                }
                 // Make it opaque
                 Renderer LaserRenderer = gameObject.GetComponent<Renderer>();
                 Color CurrentColor = LaserRenderer.material.GetColor("_Color");

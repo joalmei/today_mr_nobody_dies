@@ -25,7 +25,7 @@ public class SceneMgr : MonoBehaviour
     public static float     MaxX { get { return m_manager.m_limitRight.position.x; } }
     public static float     MinX { get { return m_manager.m_limitLeft.position.x; } }
 
-    public static bool      isGameOver;
+    public static bool     IsGameOver { get; protected set; }
 
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
     private static SceneMgr m_manager;
@@ -38,11 +38,16 @@ public class SceneMgr : MonoBehaviour
     {
         Debug.Assert(m_manager == null, this.gameObject.name + " - SceneMgr : scene manager must be unique!");
         m_manager = this;
-        isGameOver = false;
+        IsGameOver = false;
 	}
 
     public void Update()
     {
+        if (IsGameOver)
+        {
+            return;
+        }
+
         float TimeLeft = Mathf.Clamp(GameLength - Time.time, 0, GameLength);
         int MinutesLeft = (int)Mathf.Floor(TimeLeft / 60);
         int SecondsLeft = (int)Mathf.Ceil(TimeLeft - MinutesLeft*60.0f);
@@ -57,5 +62,11 @@ public class SceneMgr : MonoBehaviour
         {
             TimerRight.GetComponent<UnityEngine.UI.Text>().text = "" + SecondsLeft;
         }
+    }
+
+    public static void SetGameOver (int _player)
+    {
+        IsGameOver = true;
+        GUIMgr.GameOver(_player);
     }
 }
