@@ -59,8 +59,8 @@ MonoBehaviour:
   DelimiterY: 0.25
   PrefabBomb: {fileID: 1814870996839376, guid: ef260c7386267364b88477e4899c2b37, type: 2}
   PrefabTrap: {fileID: 1080699129292870, guid: c831f5af0d5ec824f9f80755a903f1de, type: 2}
-  PrefabTurret: {fileID: 1137322905877632, guid: ff395535e5d304f48ae806b850df7bfa,
+  PrefabTurret: {fileID: 1137322905877632, guid: 4daec38786652b1428fef8aa2702f30c,
     type: 2}
   PrefabAngleIndicator: {fileID: 1419813997656540, guid: 737440a97c535c042b8eb1720779e220,
     type: 2}
-  TurretAngleSteps: 90
+  TurretAngleSteps: 45
