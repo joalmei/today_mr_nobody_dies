@@ -15,7 +15,9 @@ public class SceneMgr : MonoBehaviour
     public GameObject       TimerLeft;
     public GameObject       TimerRight;
 
-    public float GameLength;
+    public float            GameLength;
+
+    public AudioSource      m_gameBackgroundMusic;
 
     public static float     GlobalZ { get { return m_manager.m_globalZ; } }
     public static float     MaxTime { get { return m_manager.m_max_time; } }
@@ -48,7 +50,7 @@ public class SceneMgr : MonoBehaviour
             return;
         }
 
-        float TimeLeft = Mathf.Clamp(GameLength - Time.time, 0, GameLength);
+        float TimeLeft = Mathf.Clamp(GameLength - GameMgr.Timer, 0, GameLength);
         int MinutesLeft = (int)Mathf.Floor(TimeLeft / 60);
         int SecondsLeft = (int)Mathf.Ceil(TimeLeft - MinutesLeft*60.0f);
         
@@ -68,5 +70,19 @@ public class SceneMgr : MonoBehaviour
     {
         IsGameOver = true;
         GUIMgr.GameOver(_player);
+
+        m_manager.m_gameBackgroundMusic.Stop();
+    }
+
+    public static void Pause(bool _pause)
+    {
+        if (_pause)
+        {
+            m_manager.m_gameBackgroundMusic.Pause();
+        }
+        else
+        {
+            m_manager.m_gameBackgroundMusic.UnPause();
+        }
     }
 }

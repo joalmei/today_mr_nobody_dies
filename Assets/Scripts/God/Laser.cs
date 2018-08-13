@@ -19,7 +19,7 @@ public class Laser : MonoBehaviour {
     public void Activate()
     {
         Activated = true;
-        ActivatedStart = Time.time;
+        ActivatedStart = GameMgr.Timer;
 
         Renderer LaserRenderer = gameObject.GetComponent<Renderer>();
         Color CurrentColor = LaserRenderer.material.GetColor("_Color");
@@ -35,7 +35,7 @@ public class Laser : MonoBehaviour {
 	void Update () {
         if (Activated)
         {
-            if (Time.time < ActivatedStart + TimeBeforeDamage)
+            if (GameMgr.Timer < ActivatedStart + TimeBeforeDamage)
             {
                 // Do nothing
                 if (!Transition1)
@@ -43,7 +43,7 @@ public class Laser : MonoBehaviour {
                     Transition1 = true;
                     gameObject.GetComponent<AudioSource>().Play();
                 }
-            } else if (Time.time < ActivatedStart + TimeBeforeDamage + DamageTime)
+            } else if (GameMgr.Timer < ActivatedStart + TimeBeforeDamage + DamageTime)
             {
                 if (!Transition2)
                 {

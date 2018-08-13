@@ -16,7 +16,7 @@ public class BulletTurret : MonoBehaviour
     {
         Active = true;
         Direction = DirectionParam;
-        LastFire = Time.time;
+        LastFire = GameMgr.Timer;
     }
 
     // Update is called once per frame
@@ -24,7 +24,7 @@ public class BulletTurret : MonoBehaviour
     {
         if (Active)
         {
-            if (Time.time > LastFire + FirePeriod)
+            if (GameMgr.Timer > LastFire + FirePeriod)
             {
                 GameObject Bullet = Instantiate(
                     PrefabBullet,
@@ -35,7 +35,7 @@ public class BulletTurret : MonoBehaviour
                 Bullet.GetComponent<Bullet>().Direction = Direction;
                 Bullet.GetComponent<Bullet>().Turret = gameObject;
 
-                LastFire = Time.time;
+                LastFire = GameMgr.Timer;
             }
         }
     }

@@ -42,14 +42,14 @@ public class CameraController : MonoBehaviour {
 
 	// Update is called once per frame
 	void LateUpdate () {
-        if (SceneMgr.IsGameOver)
+        if (SceneMgr.IsGameOver || GameMgr.IsPaused)
         {
             return;
         }
 
         if (m_time < max_time)
         {
-            m_time += Time.deltaTime;
+            m_time += GameMgr.DeltaTime;
             m_camera.orthographicSize = m_max_size - (m_max_size - m_min_size) / max_time * m_time;
         }
         else

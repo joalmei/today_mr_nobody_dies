@@ -23,7 +23,7 @@ public class Trap : MonoBehaviour {
     
     private void BombState0()
     {
-        bool IsInGrace = Time.time < SpawnedTime + GracePeriod;
+        bool IsInGrace = GameMgr.Timer < SpawnedTime + GracePeriod;
         Color CurrentColor = NormalColor;
 
         if (IsInGrace)
@@ -37,7 +37,7 @@ public class Trap : MonoBehaviour {
     }
     private void BombState1()
     {
-        bool IsInGrace = Time.time < SpawnedTime + GracePeriod;
+        bool IsInGrace = GameMgr.Timer < SpawnedTime + GracePeriod;
         Color CurrentColor = FlashColor;
 
         if (IsInGrace)
@@ -56,7 +56,7 @@ public class Trap : MonoBehaviour {
     {
         m_audio = this.GetComponent<AudioSource>();
         Activated = false;
-        SpawnedTime = Time.time;
+        SpawnedTime = GameMgr.Timer;
         BombState0();
     }
 	
@@ -65,14 +65,14 @@ public class Trap : MonoBehaviour {
     {
         float TrapDistance = (PlayerController.Player1.gameObject.transform.position - gameObject.transform.position).magnitude;
 
-        if (Time.time > SpawnedTime + GracePeriod && !Activated)
+        if (GameMgr.Timer > SpawnedTime + GracePeriod && !Activated)
         {
             if (TrapDistance < ActivateDistance)
             {
                 Activated = true;
                 LastSwitch = 0.0f;
                 BombState = false;
-                ActivatedTime = Time.time;
+                ActivatedTime = GameMgr.Timer;
             }
             else
             {
@@ -80,8 +80,8 @@ public class Trap : MonoBehaviour {
             }
         }
 
-        float CurrentPeriod = FlashPeriod.Evaluate((Time.time - ActivatedTime) / ExplodeTime);
-        if (Activated && Time.time > LastSwitch + CurrentPeriod)
+        float CurrentPeriod = FlashPeriod.Evaluate((GameMgr.Timer - ActivatedTime) / ExplodeTime);
+        if (Activated && GameMgr.Timer > LastSwitch + CurrentPeriod)
         {
             if (BombState)
             {
@@ -93,10 +93,10 @@ public class Trap : MonoBehaviour {
             }
 
             BombState = !BombState;
-            LastSwitch = Time.time;
+            LastSwitch = GameMgr.Timer;
         }
 
-        if (Activated && Time.time > ActivatedTime + ExplodeTime)
+        if (Activated && GameMgr.Timer > ActivatedTime + ExplodeTime)
         {
             Collider[] ExplosionColliders = Physics.OverlapSphere(
                 gameObject.transform.position,

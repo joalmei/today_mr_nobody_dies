@@ -13,12 +13,12 @@ public class Explosion : MonoBehaviour {
         m_Animator = gameObject.GetComponent<Animator>();
         m_Animator.Play("Explosion1");
 
-        AnimationStart = Time.time;
+        AnimationStart = GameMgr.Timer;
 	}
 
     private void Update()
     {
-        if (Time.time > AnimationStart + AnimationLength)
+        if (GameMgr.Timer > AnimationStart + AnimationLength)
         {
             Destroy(gameObject);
         }

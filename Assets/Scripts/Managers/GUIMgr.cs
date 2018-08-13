@@ -20,10 +20,20 @@ public class GUIMgr : MonoBehaviour
     public GameObject           m_gameOverP1;
     public GameObject           m_gameOverP2;
 
+    public GameObject           m_pauseMenu;
+
+    public Button[]             m_restartButtons;
+    public Button[]             m_exitButtons;
+
     public static Slider        JetPackFueldSlider  { get { return m_manager.m_jetpackFuelSlider; } }
     public static PanelSlider   BombSlider          { get { return m_manager.m_bombSlider; } }
     public static PanelSlider   TurretSlider        { get { return m_manager.m_turretSlider; } }
     public static PanelSlider   TrapSlider          { get { return m_manager.m_trapSlider; } }
+
+    public static Button[]      RestartButtons      { get { return m_manager.m_restartButtons; } }
+    public static Button[]      ExitButtons         { get { return m_manager.m_exitButtons; } }
+
+    public static GameObject    PauseMenu           { get { return m_manager.m_pauseMenu; } }
 
     // -------------------------------- PRIVATE ATTRIBUTES ------------------------------- //
     private static GUIMgr   m_manager;

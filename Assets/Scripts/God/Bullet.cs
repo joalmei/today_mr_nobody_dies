@@ -55,7 +55,7 @@ public class Bullet : ActionOnTouch
     // Update is called once per frame
     void Update()
     {
-        gameObject.transform.position = gameObject.transform.position + Direction.normalized * Speed * Time.deltaTime;
+        gameObject.transform.position = gameObject.transform.position + Direction.normalized * Speed * GameMgr.DeltaTime;
 
     }
 }

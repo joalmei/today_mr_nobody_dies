@@ -78,6 +78,12 @@ public class GodMgr : MonoBehaviour
 
     // ======================================================================================
     void FixedUpdate() {
+
+        if (GameMgr.IsPaused || SceneMgr.IsGameOver)
+        {
+            return;
+        }
+
         UpdatePowersGUI();
 
         IsInGodRegion();
@@ -100,7 +106,7 @@ public class GodMgr : MonoBehaviour
 
         if (CurrentPower == GodPower.Bomb)
         {
-            if (!IsDraggingBomb && Time.time > LastBomb + BombPowerCooldown && IsInGodRegion() && Input.GetButton("Fire1"))
+            if (!IsDraggingBomb && GameMgr.Timer > LastBomb + BombPowerCooldown && IsInGodRegion() && Input.GetButton("Fire1"))
             {
                 MaySwitchPowers = false;
                 IsDraggingBomb = true;
@@ -119,7 +125,7 @@ public class GodMgr : MonoBehaviour
                     IsDraggingBomb = false;
                     MaySwitchPowers = true;
 
-                    LastBomb = Time.time;
+                    LastBomb = GameMgr.Timer;
 
                     if (DraggedBomb)
                     {
@@ -157,7 +163,7 @@ public class GodMgr : MonoBehaviour
             {
                 if (!IsPlacingTurret)
                 {
-                    if (Time.time > LastTurret + TurretPowerCooldown)
+                    if (GameMgr.Timer > LastTurret + TurretPowerCooldown)
                     {
                         MaySwitchPowers = false;
                         IsPlacingTurret = true;
@@ -203,7 +209,7 @@ public class GodMgr : MonoBehaviour
             {
                 if (IsPlacingTurret)
                 {
-                    LastTurret = Time.time;
+                    LastTurret = GameMgr.Timer;
 
                     if (AngleIndicator)
                     {
@@ -230,7 +236,7 @@ public class GodMgr : MonoBehaviour
             }
         } else if (CurrentPower == GodPower.Trap)
         {
-            if (Input.GetButtonDown("Fire1") && Time.time > LastTrap + TrapPowerCooldown)
+            if (Input.GetButtonDown("Fire1") && GameMgr.Timer > LastTrap + TrapPowerCooldown)
             {
                 Instantiate(
                     PrefabTrap,
@@ -238,11 +244,11 @@ public class GodMgr : MonoBehaviour
                     Quaternion.identity
                 );
 
-                LastTrap = Time.time;
+                LastTrap = GameMgr.Timer;
             }
         }
 
-        LastStepsTime.Enqueue(Time.time);
+        LastStepsTime.Enqueue(GameMgr.Timer);
         LastMousePositions.Enqueue(GetMouseWorldPos());
         if (LastMousePositions.Count > 5)
         {
@@ -254,8 +260,8 @@ public class GodMgr : MonoBehaviour
     // ======================================================================================
     private void UpdatePowersGUI()
     {
-        GUIMgr.BombSlider.SetSlider(1 - (Time.time - LastBomb) / BombPowerCooldown);
-        GUIMgr.TurretSlider.SetSlider(1 - (Time.time - LastTurret) / TurretPowerCooldown);
-        GUIMgr.TrapSlider.SetSlider (1 - (Time.time - LastTrap) / TrapPowerCooldown);
+        GUIMgr.BombSlider.SetSlider(1 - (GameMgr.Timer - LastBomb) / BombPowerCooldown);
+        GUIMgr.TurretSlider.SetSlider(1 - (GameMgr.Timer - LastTurret) / TurretPowerCooldown);
+        GUIMgr.TrapSlider.SetSlider (1 - (GameMgr.Timer - LastTrap) / TrapPowerCooldown);
     }
 }

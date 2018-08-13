@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour
     // ======================================================================================
     public void TakeDamage()
     {
-        if (SceneMgr.IsGameOver)
+        if (GameMgr.IsPaused || SceneMgr.IsGameOver)
         {
             return;
         }
@@ -225,8 +225,8 @@ public class PlayerController : MonoBehaviour
         bool animate = false;
 
         // walk
-        float nextSpeed  = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, Time.deltaTime * m_walkAcc);
-        this.transform.position += Vector3.right * Time.deltaTime * nextSpeed;
+        float nextSpeed  = Mathf.Lerp(m_walkSpeed, m_maxWalkSpeed * _inputHorizontal, GameMgr.DeltaTime * m_walkAcc);
+        this.transform.position += Vector3.right * GameMgr.DeltaTime * nextSpeed;
 
         m_spriteRenderer.flipX = nextSpeed < 0.0f;
 
@@ -255,11 +255,11 @@ public class PlayerController : MonoBehaviour
         // Fuel
         if (_jetpackUp)
         {
-            m_jetpackFuel = Mathf.Max(0, m_jetpackFuel - Time.deltaTime);
+            m_jetpackFuel = Mathf.Max(0, m_jetpackFuel - GameMgr.DeltaTime);
         }
         else
         {
-            m_jetpackFuel = Mathf.Min(m_maxJetpackFuel, m_jetpackFuel + Time.deltaTime);
+            m_jetpackFuel = Mathf.Min(m_maxJetpackFuel, m_jetpackFuel + GameMgr.DeltaTime);
         }
 
         if (m_jetpackFuel < m_maxJetpackFuel)
@@ -276,13 +276,13 @@ public class PlayerController : MonoBehaviour
         // Translation
         if (_jetpackUp && m_jetpackFuel > 0)
         {
-            m_jetPackSpeed = Mathf.Lerp(m_jetPackSpeed, m_maxJetPackSpeed, Time.deltaTime * m_jetPackAccUp);
+            m_jetPackSpeed = Mathf.Lerp(m_jetPackSpeed, m_maxJetPackSpeed, GameMgr.DeltaTime * m_jetPackAccUp);
         }
         else
         {
             if (m_jetPackSpeed > MIN_SPEED_TO_MOVE)
             {
-                m_jetPackSpeed = Mathf.Lerp(m_jetPackSpeed, 0, Time.deltaTime * m_jetPackAccDown);
+                m_jetPackSpeed = Mathf.Lerp(m_jetPackSpeed, 0, GameMgr.DeltaTime * m_jetPackAccDown);
             }
             else
             {
@@ -292,7 +292,7 @@ public class PlayerController : MonoBehaviour
 
         if (m_jetPackSpeed > 0)
         {
-            this.transform.position = CheckCollision(this.transform.position, this.transform.position + Vector3.up * Time.deltaTime * m_jetPackSpeed);
+            this.transform.position = CheckCollision(this.transform.position, this.transform.position + Vector3.up * GameMgr.DeltaTime * m_jetPackSpeed);
         }
 
         return animate;
@@ -303,7 +303,7 @@ public class PlayerController : MonoBehaviour
     {
         bool animate = false;
 
-        m_dashCooldownTimer -= Time.deltaTime;
+        m_dashCooldownTimer -= GameMgr.DeltaTime;
 
         // Init Dash
         if (_doDash && m_dashCooldownTimer < 0)
@@ -311,7 +311,7 @@ public class PlayerController : MonoBehaviour
             m_dashTimer = 0;
             m_dashCooldownTimer = m_dashCoolDownDuration;
         }
-        m_dashTimer += Time.deltaTime;
+        m_dashTimer += GameMgr.DeltaTime;
 
         // Keep memory of dash direction
         if (_inputHorizontal != 0 || _inputVertical != 0)
@@ -328,7 +328,7 @@ public class PlayerController : MonoBehaviour
         if (m_dashTimer < m_dashDuration)
         {
             this.transform.position = CheckCollision(   this.transform.position,
-                                                        this.transform.position + new Vector3(m_dashDirection.x, m_dashDirection.y) * Time.deltaTime * m_dashMaxSpeed * m_dashSpeed.Evaluate(m_dashTimer / m_dashDuration));
+                                                        this.transform.position + new Vector3(m_dashDirection.x, m_dashDirection.y) * GameMgr.DeltaTime * m_dashMaxSpeed * m_dashSpeed.Evaluate(m_dashTimer / m_dashDuration));
 
             animate = true;
         }
@@ -340,7 +340,7 @@ public class PlayerController : MonoBehaviour
     private bool UpdateGravity()
     {
         Vector3 finalPos = CheckCollision(  this.transform.position,
-                                            this.transform.position + Time.deltaTime * Physics.gravity * m_gravityRatio);
+                                            this.transform.position + GameMgr.DeltaTime * Physics.gravity * m_gravityRatio);
 
         if (this.transform.position == finalPos)
         {
